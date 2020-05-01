@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "919689204203",
+    "firebase_url": "https://my-child-record.firebaseio.com",
+    "project_id": "my-child-record",
+    "storage_bucket": "my-child-record.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:919689204203:android:4b598f7ecf5ae7f3fc09ae",
+        "android_client_info": {
+          "package_name": "com.megumikan.my_child_record"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "919689204203-q6kbl4iunkbj6o7h99muadi9999tlam4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBTQVFm363-B9xecorF8RY8zsQcbebO7IY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "919689204203-q6kbl4iunkbj6o7h99muadi9999tlam4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
