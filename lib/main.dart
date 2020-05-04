@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'listPage.dart';
 import 'inputPage.dart';
 import 'settingPage.dart';
+import 'registrationScreen.dart';
+import 'loginScreen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 void main() => runApp(MyApp());
 
@@ -20,6 +24,8 @@ class MyApp extends StatelessWidget {
       routes: <String, WidgetBuilder> {
         '/': (BuildContext context) => MainPageWidget(),
         '/input': (BuildContext context) => InputPage(),
+        '/register': (BuildContext context) => RegistrationScreen(),
+        '/login': (BuildContext context) => LoginScreen(),
       },
     );
   }
@@ -36,12 +42,48 @@ class MainPageWidget extends StatefulWidget {
 class _MainPageState extends State<MainPageWidget> {
   int _selectedIndex = 0;
   static List<String> _words = ['てべり (テレビ）','ちゃまま (パジャマ）','かとぱー (パトカー）','ぱんかい (カンパイ）','エベレーター(エレベーター)','aaaaaaaaaa','eegesge','eg3gs','eget5hhter','eee','ooo','aaa'];
+
+  final _auth = FirebaseAuth.instance;
+  final _firestore = Firestore.instance;
+  FirebaseUser loggedInUser;
+
   final _pageWidgets = [
     ListPageWidget(words:_words),
     ListPageWidget(words:_words),
     ListPageWidget(words:_words),
     PageWidget(color:Colors.amber[100], title:'設定'),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+
+    getCurrentUser();
+    getWords();
+  }
+
+  void getCurrentUser() async {
+    try {
+      final user = await _auth.currentUser();
+      if (user != null) {
+        loggedInUser = user;
+        print(loggedInUser.email);
+        print(loggedInUser.uid);
+      } else {
+        print('not login');
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  void getWords() async {
+    final words = await _firestore.collection('words').getDocuments();
+    for (var word in words.documents) {
+      print(word.data);
+    }
+  }
+
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;

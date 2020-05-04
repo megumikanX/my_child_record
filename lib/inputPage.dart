@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 // 入力画面
 class InputPage extends StatelessWidget {
@@ -18,7 +20,35 @@ class InputFormWidget extends StatefulWidget {
   _InputFormWidgetState createState() => _InputFormWidgetState();
 }
 class _InputFormWidgetState extends State<InputFormWidget> {
+  
   final _formKey = GlobalKey<FormState>();
+  final _auth = FirebaseAuth.instance;
+  final _firestore = Firestore.instance;
+  FirebaseUser loggedInUser;
+  String wordText;
+
+  @override
+  void initState() {
+    super.initState();
+
+    getCurrentUser();
+  }
+
+  void getCurrentUser() async {
+    try {
+      final user = await _auth.currentUser();
+      if (user != null) {
+        loggedInUser = user;
+        print(loggedInUser.email);
+        print(loggedInUser.uid);
+      } else {
+        print('not login');
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -38,6 +68,9 @@ class _InputFormWidgetState extends State<InputFormWidget> {
                 }
                 return null; // 問題ない場合はnullを返す
               },
+              onChanged: (value) {
+                wordText = value;
+              },
               onSaved: (value) { // this._formKey.currentState.save()でコールされる
                 //Navigator.popUntil(context,ModalRoute.withName('/'));
                 Navigator.of(context).pop(value);
@@ -50,6 +83,13 @@ class _InputFormWidgetState extends State<InputFormWidget> {
                   if (_formKey.currentState.validate()) {
                     this._formKey.currentState.save();
                   }
+                  //wordText + loggedInUser.email
+                  _firestore.collection('words').add({
+                    'title': wordText,
+                    'userID' : loggedInUser.email
+                  });
+
+
                 },
                 child: Text('保存'),
                 color: Colors.deepPurple[100],

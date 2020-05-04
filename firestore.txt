@@ -1,0 +1,25 @@
+//users:
+//    documentID: userID
+//    name: String?
+//    createdAt: Date
+
+words:
+    documentID: auto
+    userID: String
+    title: String
+    detail: String
+    tagIDs: [String]?
+    createdAt: Date
+    updatedAt: Date
+
+tags:
+    documentID: String
+    name: String
+    createdAt: Date
+    updatedAt: Date
+
+snapshot listener
+max 1MB per document
+
+
+

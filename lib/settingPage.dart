@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 // 他のページ
 class PageWidget extends StatelessWidget {
@@ -6,6 +7,8 @@ class PageWidget extends StatelessWidget {
   final String title;
 
   PageWidget({Key key, this.color, this.title}) : super(key: key);
+
+  final _auth = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -20,6 +23,25 @@ class PageWidget extends StatelessWidget {
                 fontSize: 25,
               ),
             ),
+            RaisedButton(
+              child: Text('新規登録'),
+              onPressed: () async {
+                await Navigator.of(context).pushNamed('/register');
+              }
+            ),
+            RaisedButton(
+                child: Text('ログイン'),
+                onPressed: () async {
+                  await Navigator.of(context).pushNamed('/login');
+                }
+            ),
+            RaisedButton(
+                child: Text('ログアウト'),
+                onPressed: () {
+                  _auth.signOut();
+                }
+            ),
+            //RegistrationScreen(),
             // Image(
             //   image: AssetImage('images/photo.png'),
             // ),
@@ -29,3 +51,4 @@ class PageWidget extends StatelessWidget {
     );
   }
 }
+

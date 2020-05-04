@@ -11,10 +11,10 @@ class ListPageWidget extends StatefulWidget {
   ListPageWidgetState createState() => ListPageWidgetState();
 }
 class ListPageWidgetState extends State<ListPageWidget> {
-  //final List<String> _suggestions = <String>['one','two','three','www','xxx','aaaaaaaaaa','eegesge','eg3gs','eget5hhter','eee','ooo','aaa'];
   final Set<String> _saved = Set<String>();
   final TextStyle _biggerFont = TextStyle(fontSize: 20.0);
   final TextStyle _subFont = TextStyle(color: Colors.deepPurple[700]);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
