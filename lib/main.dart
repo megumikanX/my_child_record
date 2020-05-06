@@ -48,6 +48,7 @@ class _MainPageState extends State<MainPageWidget> {
     'かとぱー (パトカー）',
     'ぱんかい (カンパイ）',
     'エベレーター(エレベーター)',
+    '元気ぼりぼり(元気もりもり)',
     'aaaaaaaaaa',
     'eegesge',
     'eg3gs',
@@ -132,13 +133,13 @@ class _MainPageState extends State<MainPageWidget> {
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            title: Text('うちのこ'),
+            icon: Icon(Icons.person_pin),
+            title: Text('よそのこ'),
             backgroundColor: Colors.deepPurple,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person_pin),
-            title: Text('よそのこ'),
+            icon: Icon(Icons.home),
+            title: Text('うちのこ'),
             backgroundColor: Colors.deepPurple,
           ),
           BottomNavigationBarItem(

@@ -26,6 +26,7 @@ class _InputFormWidgetState extends State<InputFormWidget> {
   final _firestore = Firestore.instance;
   FirebaseUser loggedInUser;
   String wordText;
+  String detailText;
 
   @override
   void initState() {
@@ -78,7 +79,24 @@ class _InputFormWidgetState extends State<InputFormWidget> {
                 Navigator.of(context).pop(value);
               },
             ),
-            MyThreeOptions(),
+            TextFormField(
+              decoration: const InputDecoration(
+                hintText: '意味や説明を簡単に',
+              ),
+              validator: (value) {
+                // _formKey.currentState.validate()でコールされる
+                if (value.isEmpty) {
+                  return 'Please enter some text';
+                }
+                return null; // 問題ない場合はnullを返す
+              },
+              onChanged: (value) {
+                detailText = value;
+              },
+            ),
+            AgeOptions(),
+            TypeOptions(),
+            publicOptions(),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 16.0),
               child: RaisedButton(
@@ -105,13 +123,14 @@ class _InputFormWidgetState extends State<InputFormWidget> {
   }
 }
 
-class MyThreeOptions extends StatefulWidget {
+class AgeOptions extends StatefulWidget {
   @override
-  _MyThreeOptionsState createState() => _MyThreeOptionsState();
+  _AgeOptionsState createState() => _AgeOptionsState();
 }
 
-class _MyThreeOptionsState extends State<MyThreeOptions> {
+class _AgeOptionsState extends State<AgeOptions> {
   int _value = 1;
+  List<String> ageOption = ['2〜3歳', '4〜5歳', 'それ以上'];
 
   @override
   Widget build(BuildContext context) {
@@ -121,7 +140,71 @@ class _MyThreeOptionsState extends State<MyThreeOptions> {
           3,
           (int index) {
             return ChoiceChip(
-              label: Text('Item $index'),
+              label: Text(ageOption[index]),
+              selected: _value == index,
+              onSelected: (bool selected) {
+                setState(() {
+                  _value = selected ? index : null;
+                });
+              },
+            );
+          },
+        ).toList(),
+      ),
+    );
+  }
+}
+
+class TypeOptions extends StatefulWidget {
+  @override
+  _TypeOptionsState createState() => _TypeOptionsState();
+}
+
+class _TypeOptionsState extends State<TypeOptions> {
+  int _value = 1;
+  List<String> typeOption = ['言い間違い', '名言', '印象に残る言葉'];
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Wrap(
+        children: List<Widget>.generate(
+          3,
+          (int index) {
+            return ChoiceChip(
+              label: Text(typeOption[index]),
+              selected: _value == index,
+              onSelected: (bool selected) {
+                setState(() {
+                  _value = selected ? index : null;
+                });
+              },
+            );
+          },
+        ).toList(),
+      ),
+    );
+  }
+}
+
+class publicOptions extends StatefulWidget {
+  @override
+  _publicOptionsState createState() => _publicOptionsState();
+}
+
+class _publicOptionsState extends State<publicOptions> {
+  int _value = 0;
+  List<String> publicOption = ['非公開', '公開'];
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Wrap(
+        children: List<Widget>.generate(
+          2,
+          (int index) {
+            return ChoiceChip(
+              label: Text(publicOption[index]),
               selected: _value == index,
               onSelected: (bool selected) {
                 setState(() {

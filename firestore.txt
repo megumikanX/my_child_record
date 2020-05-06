@@ -1,25 +1,46 @@
-//users:
-//    documentID: userID
-//    name: String?
-//    createdAt: Date
+users:
+    documentID: userID
+    name: String?
+    favWordIDs: [String]?
+    createdAt: Date
 
 words:
     documentID: auto
     userID: String
     title: String
     detail: String
-    tagIDs: [String]?
-    createdAt: Date
-    updatedAt: Date
-
-tags:
-    documentID: String
-    name: String
+    memo: String
+    //tagIDs: [String]?
+    ageOption: Int
+    typeOption: Int
+    favCount: Int
+    isPublic: boolean
     createdAt: Date
     updatedAt: Date
 
 snapshot listener
 max 1MB per document
+
+うちの子:
+    wordsから自分のwordだけ抽出
+    編集ボタンが要る
+
+よその子:
+    人気順
+    新着順
+
+    タグによる抽出（age, type, お気に入りのみ)
+
+    favカウント表示
+
+入力画面
+    削除ボタンが要る
+
+設定画面
+    レビューを書く
+    お問い合わせ
+    プライバシーポリシー
+
 
 
 
