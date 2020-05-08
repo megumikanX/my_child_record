@@ -10,7 +10,6 @@ words:
     title: String
     detail: String
     memo: String
-    //tagIDs: [String]?
     ageOption: Int
     typeOption: Int
     favCount: Int
@@ -21,11 +20,11 @@ words:
 snapshot listener
 max 1MB per document
 
-うちの子:
-    wordsから自分のwordだけ抽出
+うちの子語録一覧:
+    wordsから自分userIDのwordだけ抽出
     編集ボタンが要る
 
-よその子:
+よその子語録一覧:
     人気順
     新着順
 

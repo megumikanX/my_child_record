@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'listScreen.dart';
+import 'myListScreen.dart';
+import 'publicListScreen.dart';
 import 'inputScreen.dart';
 import 'settingScreen.dart';
 import 'registrationScreen.dart';
@@ -42,6 +43,8 @@ class MainPageWidget extends StatefulWidget {
 
 class _MainPageState extends State<MainPageWidget> {
   int _selectedIndex = 0;
+  static String _uid;
+
   static List<String> _words = [
     'てべり (テレビ）',
     'ちゃまま (パジャマ）',
@@ -59,13 +62,14 @@ class _MainPageState extends State<MainPageWidget> {
   ];
 
   final _auth = FirebaseAuth.instance;
-  final _firestore = Firestore.instance;
+  //final _firestore = Firestore.instance;
   FirebaseUser loggedInUser;
 
   final _pageWidgets = [
-    ListPageWidget(words: _words),
-    ListPageWidget(words: _words),
-    ListPageWidget(words: _words),
+    ListPageWidget(uid: _uid),
+    PublicListPageWidget(words: _words),
+    //ListPageWidget(uid: _uid),
+    //ListPageWidget(words: _words),
     PageWidget(color: Colors.amber[100], title: '設定'),
   ];
 
@@ -74,7 +78,7 @@ class _MainPageState extends State<MainPageWidget> {
     super.initState();
 
     getCurrentUser();
-    getWords();
+    //getWords();
   }
 
   void getCurrentUser() async {
@@ -84,6 +88,7 @@ class _MainPageState extends State<MainPageWidget> {
         loggedInUser = user;
         print(loggedInUser.email);
         print(loggedInUser.uid);
+        _uid = loggedInUser.uid;
       } else {
         print('not login');
       }
@@ -92,13 +97,14 @@ class _MainPageState extends State<MainPageWidget> {
     }
   }
 
-  void getWords() async {
-    final words = await _firestore.collection('words').getDocuments();
-    for (var word in words.documents) {
-      print(word.data);
-    }
-  }
+//  void getWords() async {
+//    final words = await _firestore.collection('words').getDocuments();
+//    for (var word in words.documents) {
+//      print(word.data);
+//    }
+//  }
 
+  //ボトムナビでメニューが選ばれた時
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -142,11 +148,11 @@ class _MainPageState extends State<MainPageWidget> {
             title: Text('うちのこ'),
             backgroundColor: Colors.deepPurple,
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
-            title: Text('お気に入り'),
-            backgroundColor: Colors.deepPurple,
-          ),
+//          BottomNavigationBarItem(
+//            icon: Icon(Icons.favorite),
+//            title: Text('お気に入り'),
+//            backgroundColor: Colors.deepPurple,
+//          ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
             title: Text('設定'),

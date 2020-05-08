@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 
 // 語録リストのページ
-class ListPageWidget extends StatefulWidget {
-
+class PublicListPageWidget extends StatefulWidget {
   final List<String> words;
 
-  ListPageWidget({Key key, this.words}) : super(key: key);
+  PublicListPageWidget({Key key, this.words}) : super(key: key);
 
   @override
-  ListPageWidgetState createState() => ListPageWidgetState();
+  PublicListPageWidgetState createState() => PublicListPageWidgetState();
 }
-class ListPageWidgetState extends State<ListPageWidget> {
+
+class PublicListPageWidgetState extends State<PublicListPageWidget> {
   final Set<String> _saved = Set<String>();
   final TextStyle _biggerFont = TextStyle(fontSize: 20.0);
   final TextStyle _subFont = TextStyle(color: Colors.deepPurple[700]);
@@ -22,15 +22,17 @@ class ListPageWidgetState extends State<ListPageWidget> {
       body: _buildListView(),
     );
   }
+
   Widget _buildListView() {
     return ListView.builder(
-        padding: const EdgeInsets.all(16.0),
-        itemBuilder:  (context, i) {
-          return _buildRow(widget.words[i]);
-        },
-        itemCount: widget.words.length,
-      );
+      padding: const EdgeInsets.all(16.0),
+      itemBuilder: (context, i) {
+        return _buildRow(widget.words[i]);
+      },
+      itemCount: widget.words.length,
+    );
   }
+
   Widget _buildRow(String word) {
     final bool alreadySaved = _saved.contains(word);
     return Card(
