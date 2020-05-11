@@ -25,8 +25,18 @@ class _InputFormWidgetState extends State<InputFormWidget> {
   final _auth = FirebaseAuth.instance;
   final _firestore = Firestore.instance;
   FirebaseUser loggedInUser;
+
   String wordText;
   String detailText;
+
+  int age = 1;
+  final List<String> ageOption = ['2〜3歳', '4〜5歳', 'それ以上'];
+
+  int type = 1;
+  final List<String> typeOption = ['言い間違い', '名言', '印象に残る言葉'];
+
+  int public = 0;
+  final List<String> publicOption = ['非公開', '公開'];
 
   @override
   void initState() {
@@ -94,9 +104,62 @@ class _InputFormWidgetState extends State<InputFormWidget> {
                 detailText = value;
               },
             ),
-            AgeOptions(),
-            TypeOptions(),
-            publicOptions(),
+            //AgeOptions(selec),
+            Wrap(
+              spacing: 5.0,
+              children: List<Widget>.generate(
+                3,
+                (int index) {
+                  return ChoiceChip(
+                    label: Text(ageOption[index]),
+                    selected: age == index,
+                    onSelected: (bool selected) {
+                      setState(() {
+                        age = selected ? index : null;
+                        print(age);
+                      });
+                    },
+                  );
+                },
+              ).toList(),
+            ),
+            Wrap(
+              spacing: 5.0,
+              children: List<Widget>.generate(
+                3,
+                (int index) {
+                  return ChoiceChip(
+                    label: Text(typeOption[index]),
+                    selected: type == index,
+                    onSelected: (bool selected) {
+                      setState(() {
+                        type = selected ? index : null;
+                        print(type);
+                      });
+                    },
+                  );
+                },
+              ).toList(),
+            ),
+            Wrap(
+              spacing: 5.0,
+              children: List<Widget>.generate(
+                2,
+                (int index) {
+                  return ChoiceChip(
+                    label: Text(publicOption[index]),
+                    selected: public == index,
+                    onSelected: (bool selected) {
+                      setState(() {
+                        public = selected ? index : null;
+                        print(public);
+                      });
+                    },
+                  );
+                },
+              ).toList(),
+            ),
+            //publicOptions(),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 16.0),
               child: RaisedButton(
@@ -104,10 +167,17 @@ class _InputFormWidgetState extends State<InputFormWidget> {
                   if (_formKey.currentState.validate()) {
                     this._formKey.currentState.save();
                   }
-                  //wordText + loggedInUser.email
-                  _firestore
-                      .collection('words')
-                      .add({'title': wordText, 'userID': loggedInUser.email});
+                  _firestore.collection('words').add({
+                    'userID': loggedInUser.email,
+                    'title': wordText,
+                    'detail': detailText,
+                    'ageOption': age,
+                    'typeOption': type,
+                    'favCount': 0,
+                    'isPublic': public,
+                    'createdAt': DateTime.now(),
+                    'updatedAt': DateTime.now(),
+                  });
                 },
                 child: Text('保存'),
                 color: Colors.deepPurple[100],
@@ -118,102 +188,6 @@ class _InputFormWidgetState extends State<InputFormWidget> {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class AgeOptions extends StatefulWidget {
-  @override
-  _AgeOptionsState createState() => _AgeOptionsState();
-}
-
-class _AgeOptionsState extends State<AgeOptions> {
-  int _value = 1;
-  List<String> ageOption = ['2〜3歳', '4〜5歳', 'それ以上'];
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Wrap(
-        children: List<Widget>.generate(
-          3,
-          (int index) {
-            return ChoiceChip(
-              label: Text(ageOption[index]),
-              selected: _value == index,
-              onSelected: (bool selected) {
-                setState(() {
-                  _value = selected ? index : null;
-                });
-              },
-            );
-          },
-        ).toList(),
-      ),
-    );
-  }
-}
-
-class TypeOptions extends StatefulWidget {
-  @override
-  _TypeOptionsState createState() => _TypeOptionsState();
-}
-
-class _TypeOptionsState extends State<TypeOptions> {
-  int _value = 1;
-  List<String> typeOption = ['言い間違い', '名言', '印象に残る言葉'];
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Wrap(
-        children: List<Widget>.generate(
-          3,
-          (int index) {
-            return ChoiceChip(
-              label: Text(typeOption[index]),
-              selected: _value == index,
-              onSelected: (bool selected) {
-                setState(() {
-                  _value = selected ? index : null;
-                });
-              },
-            );
-          },
-        ).toList(),
-      ),
-    );
-  }
-}
-
-class publicOptions extends StatefulWidget {
-  @override
-  _publicOptionsState createState() => _publicOptionsState();
-}
-
-class _publicOptionsState extends State<publicOptions> {
-  int _value = 0;
-  List<String> publicOption = ['非公開', '公開'];
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Wrap(
-        children: List<Widget>.generate(
-          2,
-          (int index) {
-            return ChoiceChip(
-              label: Text(publicOption[index]),
-              selected: _value == index,
-              onSelected: (bool selected) {
-                setState(() {
-                  _value = selected ? index : null;
-                });
-              },
-            );
-          },
-        ).toList(),
       ),
     );
   }

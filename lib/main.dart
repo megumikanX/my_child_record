@@ -45,6 +45,7 @@ class _MainPageState extends State<MainPageWidget> {
   int _selectedIndex = 0;
   static String _uid;
 
+  static List<String> _myWords = List<String>();
   static List<String> _words = [
     'てべり (テレビ）',
     'ちゃまま (パジャマ）',
@@ -62,11 +63,11 @@ class _MainPageState extends State<MainPageWidget> {
   ];
 
   final _auth = FirebaseAuth.instance;
-  //final _firestore = Firestore.instance;
+  final _firestore = Firestore.instance;
   FirebaseUser loggedInUser;
 
   final _pageWidgets = [
-    ListPageWidget(uid: _uid),
+    ListPageWidget(myWords: _myWords),
     PublicListPageWidget(words: _words),
     //ListPageWidget(uid: _uid),
     //ListPageWidget(words: _words),
@@ -78,7 +79,10 @@ class _MainPageState extends State<MainPageWidget> {
     super.initState();
 
     getCurrentUser();
-    //getWords();
+
+    setState(() {
+      getWords();
+    });
   }
 
   void getCurrentUser() async {
@@ -97,12 +101,16 @@ class _MainPageState extends State<MainPageWidget> {
     }
   }
 
-//  void getWords() async {
-//    final words = await _firestore.collection('words').getDocuments();
-//    for (var word in words.documents) {
-//      print(word.data);
-//    }
-//  }
+  void getWords() async {
+    final words = await _firestore.collection('words').getDocuments();
+    for (var word in words.documents) {
+      print(word.data);
+      Map record = word.data;
+      //setState(() {
+      _myWords.add(record["title"]);
+      //});
+    }
+  }
 
   //ボトムナビでメニューが選ばれた時
   void _onItemTapped(int index) {
@@ -130,8 +138,8 @@ class _MainPageState extends State<MainPageWidget> {
           final result = await Navigator.of(context).pushNamed('/input');
           if (result != null) {
             final contentText = 'I received ' + result + ' !';
-            _words.add(result);
             print(contentText);
+            _myWords.add(result);
           }
         },
       ),

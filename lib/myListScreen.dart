@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 
 // 語録リストのページ
 class ListPageWidget extends StatefulWidget {
-  final String uid;
+  //final String uid;
+  final List<String> myWords;
 
-  ListPageWidget({Key key, this.uid}) : super(key: key);
+  ListPageWidget({Key key, this.myWords}) : super(key: key);
 
   @override
   ListPageWidgetState createState() => ListPageWidgetState();
@@ -16,26 +17,23 @@ class ListPageWidgetState extends State<ListPageWidget> {
   final TextStyle _subFont = TextStyle(color: Colors.deepPurple[700]);
 
   final _firestore = Firestore.instance;
-  List<String> _myWords = List<String>();
+  //List<String> _myWords = List<String>();
 
   @override
   void initState() {
     super.initState();
 
     //getWords();
-    setState(() {
-      getWords();
-    });
   }
 
-  void getWords() async {
-    final words = await _firestore.collection('words').getDocuments();
-    for (var word in words.documents) {
-      print(word.data);
-      Map record = word.data;
-      _myWords.add(record["title"]);
-    }
-  }
+//  void getWords() async {
+//    final words = await _firestore.collection('words').getDocuments();
+//    for (var word in words.documents) {
+//      print(word.data);
+//      Map record = word.data;
+//      _myWords.add(record["title"]);
+//    }
+//  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,9 +48,9 @@ class ListPageWidgetState extends State<ListPageWidget> {
       padding: const EdgeInsets.all(16.0),
       itemBuilder: (context, i) {
         //return _buildRow(widget.words[i]);
-        return _buildRow(_myWords[i]);
+        return _buildRow(widget.myWords[i]);
       },
-      itemCount: _myWords.length,
+      itemCount: widget.myWords.length,
     );
   }
 

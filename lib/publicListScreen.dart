@@ -19,7 +19,15 @@ class PublicListPageWidgetState extends State<PublicListPageWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.pink[50],
-      body: _buildListView(),
+      body: Column(
+        children: <Widget>[
+
+          FilterChip(
+            Label:
+          ),
+          Expanded(child: _buildListView()),
+        ],
+      ),
     );
   }
 
