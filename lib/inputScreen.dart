@@ -7,7 +7,7 @@ class InputPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("入力画面")),
+      appBar: AppBar(title: Text("入力")),
       body: Center(child: InputFormWidget()),
     );
   }
@@ -86,7 +86,7 @@ class _InputFormWidgetState extends State<InputFormWidget> {
               onSaved: (value) {
                 // this._formKey.currentState.save()でコールされる
                 //Navigator.popUntil(context,ModalRoute.withName('/'));
-                Navigator.of(context).pop(value);
+                //Navigator.of(context).pop(value);
               },
             ),
             TextFormField(
@@ -164,9 +164,9 @@ class _InputFormWidgetState extends State<InputFormWidget> {
               padding: const EdgeInsets.symmetric(vertical: 16.0),
               child: RaisedButton(
                 onPressed: () {
-                  if (_formKey.currentState.validate()) {
-                    this._formKey.currentState.save();
-                  }
+//                  if (_formKey.currentState.validate()) {
+//                    this._formKey.currentState.save();
+//                  }
                   _firestore.collection('words').add({
                     'userID': loggedInUser.email,
                     'title': wordText,
@@ -178,6 +178,7 @@ class _InputFormWidgetState extends State<InputFormWidget> {
                     'createdAt': DateTime.now(),
                     'updatedAt': DateTime.now(),
                   });
+                  Navigator.of(context).pop();
                 },
                 child: Text('保存'),
                 color: Colors.deepPurple[100],

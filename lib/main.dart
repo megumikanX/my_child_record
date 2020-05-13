@@ -5,8 +5,8 @@ import 'inputScreen.dart';
 import 'settingScreen.dart';
 import 'registrationScreen.dart';
 import 'loginScreen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+//import 'package:firebase_auth/firebase_auth.dart';
+//import 'package:cloud_firestore/cloud_firestore.dart';
 
 void main() => runApp(MyApp());
 
@@ -43,74 +43,21 @@ class MainPageWidget extends StatefulWidget {
 
 class _MainPageState extends State<MainPageWidget> {
   int _selectedIndex = 0;
-  static String _uid;
+  static String _uid = 'not login';
 
-  static List<String> _myWords = List<String>();
-  static List<String> _words = [
-    'てべり (テレビ）',
-    'ちゃまま (パジャマ）',
-    'かとぱー (パトカー）',
-    'ぱんかい (カンパイ）',
-    'エベレーター(エレベーター)',
-    '元気ぼりぼり(元気もりもり)',
-    'aaaaaaaaaa',
-    'eegesge',
-    'eg3gs',
-    'eget5hhter',
-    'eee',
-    'ooo',
-    'aaa'
-  ];
+  //static List<Map> _myWords = List<Map>();
+  //static List<Map> _allWords = List<Map>();
 
-  final _auth = FirebaseAuth.instance;
-  final _firestore = Firestore.instance;
-  FirebaseUser loggedInUser;
+//  final _auth = FirebaseAuth.instance;
+//  final _firestore = Firestore.instance;
+//  FirebaseUser loggedInUser;
 
   final _pageWidgets = [
-    ListPageWidget(myWords: _myWords),
-    PublicListPageWidget(words: _words),
+    PublicListPageWidget(),
+    ListPageWidget(),
     //ListPageWidget(uid: _uid),
-    //ListPageWidget(words: _words),
     PageWidget(color: Colors.amber[100], title: '設定'),
   ];
-
-  @override
-  void initState() {
-    super.initState();
-
-    getCurrentUser();
-
-    setState(() {
-      getWords();
-    });
-  }
-
-  void getCurrentUser() async {
-    try {
-      final user = await _auth.currentUser();
-      if (user != null) {
-        loggedInUser = user;
-        print(loggedInUser.email);
-        print(loggedInUser.uid);
-        _uid = loggedInUser.uid;
-      } else {
-        print('not login');
-      }
-    } catch (e) {
-      print(e);
-    }
-  }
-
-  void getWords() async {
-    final words = await _firestore.collection('words').getDocuments();
-    for (var word in words.documents) {
-      print(word.data);
-      Map record = word.data;
-      //setState(() {
-      _myWords.add(record["title"]);
-      //});
-    }
-  }
 
   //ボトムナビでメニューが選ばれた時
   void _onItemTapped(int index) {
@@ -121,6 +68,7 @@ class _MainPageState extends State<MainPageWidget> {
 
   @override
   Widget build(BuildContext context) {
+    print('Build --> main');
     return Scaffold(
       backgroundColor: Colors.deepPurple[50],
       appBar: AppBar(
@@ -130,19 +78,22 @@ class _MainPageState extends State<MainPageWidget> {
       ),
       body: _pageWidgets.elementAt(_selectedIndex),
       // 書くボタン
-      floatingActionButton: FloatingActionButton.extended(
-        label: Text('書く'),
-        icon: Icon(Icons.create),
-        backgroundColor: Colors.pinkAccent,
-        onPressed: () async {
-          final result = await Navigator.of(context).pushNamed('/input');
-          if (result != null) {
-            final contentText = 'I received ' + result + ' !';
-            print(contentText);
-            _myWords.add(result);
-          }
-        },
-      ),
+//      floatingActionButton: Visibility(
+//        visible: _selectedIndex == 1,
+//        child: FloatingActionButton.extended(
+//          label: Text('書く'),
+//          icon: Icon(Icons.create),
+//          backgroundColor: Colors.pinkAccent,
+//          onPressed: () async {
+//            final result = await Navigator.of(context).pushNamed('/input');
+//            if (result != null) {
+//              final contentText = 'I received ' + result + ' !';
+//              print(contentText);
+//              //_myWords.add(result);
+//            }
+//          },
+//        ),
+//      ),
       // ボトムナビゲーション
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[

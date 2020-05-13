@@ -1,12 +1,16 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 // 語録リストのページ
 class ListPageWidget extends StatefulWidget {
+  //final List<Map> myWords;
   //final String uid;
-  final List<String> myWords;
 
-  ListPageWidget({Key key, this.myWords}) : super(key: key);
+  //ListPageWidget({Key key, this.myWords, this.uid}) : super(key: key);
+  ListPageWidget({Key key}) : super(key: key);
 
   @override
   ListPageWidgetState createState() => ListPageWidgetState();
@@ -16,30 +20,91 @@ class ListPageWidgetState extends State<ListPageWidget> {
   final TextStyle _biggerFont = TextStyle(fontSize: 20.0);
   final TextStyle _subFont = TextStyle(color: Colors.deepPurple[700]);
 
+  final List<String> ageOption = ['2〜3歳', '4〜5歳', 'それ以上'];
+  final List<String> typeOption = ['言い間違い', '名言', '印象に残る言葉'];
+
+  final _auth = FirebaseAuth.instance;
   final _firestore = Firestore.instance;
-  //List<String> _myWords = List<String>();
+  FirebaseUser loggedInUser;
+
+  List<Map> _myWords = List<Map>();
+  String _uid = 'not login';
+  String _email = 'not login';
 
   @override
   void initState() {
     super.initState();
 
-    //getWords();
+    getCurrentUser();
   }
 
-//  void getWords() async {
-//    final words = await _firestore.collection('words').getDocuments();
-//    for (var word in words.documents) {
-//      print(word.data);
-//      Map record = word.data;
-//      _myWords.add(record["title"]);
-//    }
-//  }
+  @override
+  void didUpdateWidget(ListPageWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    getCurrentUser();
+  }
+
+  void getCurrentUser() async {
+    try {
+      final user = await _auth.currentUser();
+      if (user != null) {
+        loggedInUser = user;
+        print(loggedInUser.email);
+        print(loggedInUser.uid);
+        _uid = loggedInUser.uid;
+        setState(() {
+          _email = loggedInUser.email;
+        });
+        getMyWords();
+      } else {
+        print('not login');
+        _uid = 'not login';
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  void getMyWords() async {
+    //_myWords = [];
+    final words = await _firestore
+        .collection('words')
+        .where("userID", isEqualTo: loggedInUser.email)
+        .getDocuments();
+    for (var word in words.documents) {
+      Map record = word.data;
+      setState(() {
+        _myWords.add(record);
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    print('Build --> myListPageWidget');
     return Scaffold(
       backgroundColor: Colors.pink[50],
-      body: _buildListView(),
+      //body: widget.isLogin ? _buildListView() : Text('ログインしてね'),
+      body: Column(
+        children: <Widget>[
+          Text(_email),
+          Expanded(child: _buildListView()),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        label: Text('書く'),
+        icon: Icon(Icons.create),
+        backgroundColor: Colors.pinkAccent,
+        onPressed: () async {
+          final result = await Navigator.of(context).pushNamed('/input');
+          if (result != null) {
+            final contentText = 'I received ' + result + ' !';
+            print(contentText);
+            //_myWords.add(result);
+          }
+        },
+      ),
     );
   }
 
@@ -47,24 +112,27 @@ class ListPageWidgetState extends State<ListPageWidget> {
     return ListView.builder(
       padding: const EdgeInsets.all(16.0),
       itemBuilder: (context, i) {
-        //return _buildRow(widget.words[i]);
-        return _buildRow(widget.myWords[i]);
+        return _buildRow(_myWords[i]);
       },
-      itemCount: widget.myWords.length,
+      itemCount: _myWords.length,
     );
   }
 
-  Widget _buildRow(String word) {
+  Widget _buildRow(Map word) {
+    final String age = ageOption[word["ageOption"]];
+    final String type = typeOption[word["typeOption"]];
+
     return Card(
       color: Colors.yellow[50],
       child: ListTile(
         leading: Icon(Icons.child_care),
         title: Text(
-          word,
+          word["title"],
           style: _biggerFont,
         ),
         subtitle: Text(
-          '２歳 言い間違え',
+          word["detail"] + "\n" + age + " " + type,
+          //word["detail"],
           style: _subFont,
         ),
         isThreeLine: true,
