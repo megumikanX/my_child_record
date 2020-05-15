@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'main.dart';
 
 class LoginScreen extends StatelessWidget {
-
   LoginScreen({Key key}) : super(key: key);
 
   @override
@@ -13,12 +13,10 @@ class LoginScreen extends StatelessWidget {
         title: const Text('うちの子語録'),
         backgroundColor: Colors.pinkAccent,
       ),
-      body:
-      Padding(
+      body: Padding(
         padding: const EdgeInsets.all(50.0),
         child: LoginForm(),
       ),
-
     );
   }
 }
@@ -29,7 +27,6 @@ class LoginForm extends StatefulWidget {
 }
 
 class _LoginFormState extends State<LoginForm> {
-
   final _auth = FirebaseAuth.instance;
   String email;
   String password;
@@ -63,18 +60,23 @@ class _LoginFormState extends State<LoginForm> {
               child: Text('login'),
               onPressed: () async {
                 try {
-                  final user = await _auth.signInWithEmailAndPassword
-                    (email: email, password: password);
-                  if(user != null) {
+                  final user = await _auth.signInWithEmailAndPassword(
+                      email: email, password: password);
+                  final loginUser = await _auth.currentUser();
+                  if (user != null) {
                     print('login ok');
-                    Navigator.of(context).pushNamed('/');
+                    print(loginUser.uid);
+                    //Navigator.of(context).pushNamed('/');
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MainPageWidget(),
+                        ));
                   }
-                }
-                catch (e) {
+                } catch (e) {
                   print(e);
                 }
-              }
-          )
+              })
         ],
       ),
     );

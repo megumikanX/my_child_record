@@ -3,11 +3,13 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'inputScreen.dart';
 
-// 語録リストのページ
+// うちの子語録リストのページ
 class ListPageWidget extends StatefulWidget {
   //final List<Map> myWords;
   //final String uid;
+  //final FirebaseUser loginUser;
 
   //ListPageWidget({Key key, this.myWords, this.uid}) : super(key: key);
   ListPageWidget({Key key}) : super(key: key);
@@ -20,7 +22,7 @@ class ListPageWidgetState extends State<ListPageWidget> {
   final TextStyle _biggerFont = TextStyle(fontSize: 20.0);
   final TextStyle _subFont = TextStyle(color: Colors.deepPurple[700]);
 
-  final List<String> ageOption = ['2〜3歳', '4〜5歳', 'それ以上'];
+  final List<String> ageOption = ['2〜3歳', '4〜5歳', '6歳以上'];
   final List<String> typeOption = ['言い間違い', '名言', '印象に残る言葉'];
 
   final _auth = FirebaseAuth.instance;
@@ -36,13 +38,15 @@ class ListPageWidgetState extends State<ListPageWidget> {
     super.initState();
 
     getCurrentUser();
+    //getMyWords();
   }
 
   @override
   void didUpdateWidget(ListPageWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    getCurrentUser();
+    //getCurrentUser();
+    getMyWords();
   }
 
   void getCurrentUser() async {
@@ -67,16 +71,23 @@ class ListPageWidgetState extends State<ListPageWidget> {
   }
 
   void getMyWords() async {
-    //_myWords = [];
-    final words = await _firestore
-        .collection('words')
-        .where("userID", isEqualTo: loggedInUser.email)
-        .getDocuments();
-    for (var word in words.documents) {
-      Map record = word.data;
-      setState(() {
-        _myWords.add(record);
-      });
+    _myWords = [];
+    print('get my words');
+    try {
+      final words = await _firestore
+          .collection('words')
+          .where("userID", isEqualTo: loggedInUser.uid)
+          .orderBy("createdAt", descending: true)
+          .getDocuments();
+      for (var word in words.documents) {
+        Map record = word.data;
+        record["documentID"] = word.documentID;
+        setState(() {
+          _myWords.add(record);
+        });
+      }
+    } catch (e) {
+      print(e);
     }
   }
 
@@ -96,13 +107,20 @@ class ListPageWidgetState extends State<ListPageWidget> {
         label: Text('書く'),
         icon: Icon(Icons.create),
         backgroundColor: Colors.pinkAccent,
-        onPressed: () async {
-          final result = await Navigator.of(context).pushNamed('/input');
-          if (result != null) {
-            final contentText = 'I received ' + result + ' !';
-            print(contentText);
-            //_myWords.add(result);
-          }
+//        onPressed: () async {
+//          final result = await Navigator.of(context).pushNamed('/input');
+//          if (result != null) {
+//            final contentText = 'I received ' + result + ' !';
+//            print(contentText);
+//            //_myWords.add(result);
+//          }
+        onPressed: () {
+          Map record;
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => InputScreen(record, getMyWords),
+              ));
         },
       ),
     );
@@ -137,7 +155,16 @@ class ListPageWidgetState extends State<ListPageWidget> {
         ),
         isThreeLine: true,
         trailing: Icon(Icons.create, color: Colors.pink),
-        onTap: () {},
+        onTap: () {
+          print(word["documentID"]);
+          String documentID = word["documentID"];
+          Map record = word;
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => InputScreen(record, getMyWords),
+              ));
+        },
       ),
     );
   }

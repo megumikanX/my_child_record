@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'myListScreen.dart';
 import 'publicListScreen.dart';
-import 'inputScreen.dart';
 import 'settingScreen.dart';
 import 'registrationScreen.dart';
 import 'loginScreen.dart';
-//import 'package:firebase_auth/firebase_auth.dart';
-//import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 void main() => runApp(MyApp());
 
@@ -23,8 +21,7 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/',
       routes: <String, WidgetBuilder>{
-        '/': (BuildContext context) => MainPageWidget(),
-        '/input': (BuildContext context) => InputPage(),
+        '/': (BuildContext context) => MainPageWidget(loginUser: null),
         '/register': (BuildContext context) => RegistrationScreen(),
         '/login': (BuildContext context) => LoginScreen(),
       },
@@ -34,8 +31,9 @@ class MyApp extends StatelessWidget {
 
 // メインページ
 class MainPageWidget extends StatefulWidget {
-  final menuIndex;
-  MainPageWidget({Key key, this.menuIndex}) : super(key: key);
+  //final String uid;
+  final FirebaseUser loginUser;
+  MainPageWidget({Key key, this.loginUser}) : super(key: key);
 
   @override
   _MainPageState createState() => _MainPageState();
@@ -43,21 +41,19 @@ class MainPageWidget extends StatefulWidget {
 
 class _MainPageState extends State<MainPageWidget> {
   int _selectedIndex = 0;
-  static String _uid = 'not login';
-
-  //static List<Map> _myWords = List<Map>();
-  //static List<Map> _allWords = List<Map>();
-
-//  final _auth = FirebaseAuth.instance;
-//  final _firestore = Firestore.instance;
-//  FirebaseUser loggedInUser;
 
   final _pageWidgets = [
     PublicListPageWidget(),
     ListPageWidget(),
-    //ListPageWidget(uid: _uid),
     PageWidget(color: Colors.amber[100], title: '設定'),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+
+    print(widget.loginUser);
+  }
 
   //ボトムナビでメニューが選ばれた時
   void _onItemTapped(int index) {
@@ -77,34 +73,17 @@ class _MainPageState extends State<MainPageWidget> {
         backgroundColor: Colors.pinkAccent,
       ),
       body: _pageWidgets.elementAt(_selectedIndex),
-      // 書くボタン
-//      floatingActionButton: Visibility(
-//        visible: _selectedIndex == 1,
-//        child: FloatingActionButton.extended(
-//          label: Text('書く'),
-//          icon: Icon(Icons.create),
-//          backgroundColor: Colors.pinkAccent,
-//          onPressed: () async {
-//            final result = await Navigator.of(context).pushNamed('/input');
-//            if (result != null) {
-//              final contentText = 'I received ' + result + ' !';
-//              print(contentText);
-//              //_myWords.add(result);
-//            }
-//          },
-//        ),
-//      ),
       // ボトムナビゲーション
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.person_pin),
-            title: Text('よそのこ'),
+            icon: Icon(Icons.collections_bookmark),
+            title: Text('みんなの語録'),
             backgroundColor: Colors.deepPurple,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
-            title: Text('うちのこ'),
+            title: Text('うちのこ語録'),
             backgroundColor: Colors.deepPurple,
           ),
 //          BottomNavigationBarItem(

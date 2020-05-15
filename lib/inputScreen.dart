@@ -3,19 +3,27 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 // 入力画面
-class InputPage extends StatelessWidget {
+class InputScreen extends StatelessWidget {
+  final Map record;
+  final void Function() getWords;
+
+  InputScreen(this.record, this.getWords);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("入力")),
-      body: Center(child: InputFormWidget()),
+      body: Center(child: InputFormWidget(record: record, getWords: getWords)),
     );
   }
 }
 
 // 入力Form
 class InputFormWidget extends StatefulWidget {
-  InputFormWidget({Key key}) : super(key: key);
+  final Map record;
+  final void Function() getWords;
+  InputFormWidget({Key key, this.record, this.getWords}) : super(key: key);
+
   @override
   _InputFormWidgetState createState() => _InputFormWidgetState();
 }
@@ -30,7 +38,7 @@ class _InputFormWidgetState extends State<InputFormWidget> {
   String detailText;
 
   int age = 1;
-  final List<String> ageOption = ['2〜3歳', '4〜5歳', 'それ以上'];
+  final List<String> ageOption = ['2〜3歳', '4〜5歳', '6歳以上'];
 
   int type = 1;
   final List<String> typeOption = ['言い間違い', '名言', '印象に残る言葉'];
@@ -42,7 +50,12 @@ class _InputFormWidgetState extends State<InputFormWidget> {
   void initState() {
     super.initState();
 
-    getCurrentUser();
+    if (widget.record == null) {
+      getCurrentUser();
+    } else {
+      wordText = widget.record["title"];
+      detailText = widget.record["detail"];
+    }
   }
 
   void getCurrentUser() async {
@@ -70,6 +83,8 @@ class _InputFormWidgetState extends State<InputFormWidget> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             TextFormField(
+              initialValue:
+                  (widget.record != null) ? widget.record["title"] : '',
               decoration: const InputDecoration(
                 hintText: '子供の可愛い言い間違えや名言を登録しよう',
               ),
@@ -90,6 +105,8 @@ class _InputFormWidgetState extends State<InputFormWidget> {
               },
             ),
             TextFormField(
+              initialValue:
+                  (widget.record != null) ? widget.record["detail"] : '',
               decoration: const InputDecoration(
                 hintText: '意味や説明を簡単に',
               ),
@@ -163,22 +180,38 @@ class _InputFormWidgetState extends State<InputFormWidget> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 16.0),
               child: RaisedButton(
-                onPressed: () {
-//                  if (_formKey.currentState.validate()) {
-//                    this._formKey.currentState.save();
-//                  }
-                  _firestore.collection('words').add({
-                    'userID': loggedInUser.email,
-                    'title': wordText,
-                    'detail': detailText,
-                    'ageOption': age,
-                    'typeOption': type,
-                    'favCount': 0,
-                    'isPublic': public,
-                    'createdAt': DateTime.now(),
-                    'updatedAt': DateTime.now(),
-                  });
-                  Navigator.of(context).pop();
+                onPressed: () async {
+                  if (_formKey.currentState.validate()) {
+                    //this._formKey.currentState.save();
+
+                    //新規登録の場合
+                    if (widget.record == null) {
+                      final result = await _firestore.collection('words').add({
+                        'userID': loggedInUser.email,
+                        'title': wordText,
+                        'detail': detailText,
+                        'ageOption': age,
+                        'typeOption': type,
+                        'favCount': 0,
+                        'isPublic': public,
+                        'createdAt': DateTime.now(),
+                        'updatedAt': DateTime.now(),
+                      });
+
+                      //更新の場合
+                    } else {
+                      final ref = _firestore
+                          .collection('words')
+                          .document(widget.record["documentID"]);
+                      await ref.updateData({
+                        'title': wordText,
+                        'detail': detailText,
+                        'updatedAt': DateTime.now()
+                      });
+                    }
+                    widget.getWords();
+                    Navigator.of(context).pop();
+                  }
                 },
                 child: Text('保存'),
                 color: Colors.deepPurple[100],
