@@ -40,17 +40,25 @@ class PublicListPageWidgetState extends State<PublicListPageWidget> {
   }
 
   void getAllWords() async {
+    _allWords = [];
+    Query query =
+        _firestore.collection('words').where("isPublic", isEqualTo: 1);
+
+    if (orderByValue == 0) {
+      query = query.orderBy("createdAt", descending: true);
+    } else {
+      query = query.orderBy("favCount", descending: true);
+    }
+
     try {
-      final words = await _firestore
-          .collection('words')
-          .where("isPublic", isEqualTo: 1)
-          .orderBy("createdAt", descending: true)
-          .getDocuments();
+      final words = await query.limit(100).getDocuments();
       for (var word in words.documents) {
         Map record = word.data;
         record["documentID"] = word.documentID;
         setState(() {
-          _allWords.add(record);
+          if (filterValue == 0 || _saved.contains(word.documentID)) {
+            _allWords.add(record);
+          }
         });
       }
     } catch (e) {
@@ -122,6 +130,7 @@ class PublicListPageWidgetState extends State<PublicListPageWidget> {
                   onValueChanged: (int newValue) {
                     setState(() {
                       orderByValue = newValue;
+                      getAllWords();
                     });
                   },
                 ),
@@ -135,6 +144,7 @@ class PublicListPageWidgetState extends State<PublicListPageWidget> {
                   onValueChanged: (int newValue) {
                     setState(() {
                       filterValue = newValue;
+                      getAllWords();
                     });
                   },
                 ),
