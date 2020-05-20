@@ -11,8 +11,8 @@ class RegistrationScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: Icon(Icons.child_care),
-        title: const Text('うちの子語録'),
+        //leading: Icon(Icons.child_care),
+        title: const Text('新規登録'),
         backgroundColor: Colors.pinkAccent,
       ),
       body: Padding(

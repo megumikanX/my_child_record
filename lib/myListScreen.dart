@@ -19,8 +19,12 @@ class ListPageWidget extends StatefulWidget {
 }
 
 class ListPageWidgetState extends State<ListPageWidget> {
-  final TextStyle _biggerFont = TextStyle(fontSize: 20.0);
-  final TextStyle _subFont = TextStyle(color: Colors.deepPurple[700]);
+  final TextStyle _biggerFont =
+      TextStyle(fontSize: 20.0, fontFamily: 'TypeGothic');
+  final TextStyle _subFont = TextStyle(
+    color: Colors.deepPurple[700],
+    fontFamily: 'TypeGothic',
+  );
 
   final List<String> ageOption = ['2〜3歳', '4〜5歳', '6歳以上'];
   final List<String> typeOption = ['言い間違い', '名言', '印象に残る言葉'];
@@ -140,6 +144,19 @@ class ListPageWidgetState extends State<ListPageWidget> {
     final String age = ageOption[word["ageOption"]];
     final String type = typeOption[word["typeOption"]];
 
+    final TextStyle _subFont = TextStyle(
+        color: Colors.grey[500], fontFamily: 'TypeGothic', height: 1.2);
+    final TextStyle _ageFont = TextStyle(
+        color: Colors.pinkAccent,
+        fontFamily: 'TypeGothic',
+        height: 2.0,
+        fontSize: 12.0);
+    final TextStyle _typeFont = TextStyle(
+        color: Colors.deepPurple[700],
+        fontFamily: 'TypeGothic',
+        height: 2.0,
+        fontSize: 12.0);
+
     return Card(
       color: Colors.yellow[50],
       child: ListTile(
@@ -148,10 +165,14 @@ class ListPageWidgetState extends State<ListPageWidget> {
           word["title"],
           style: _biggerFont,
         ),
-        subtitle: Text(
-          word["detail"] + "\n" + age + " " + type,
-          //word["detail"],
-          style: _subFont,
+        subtitle: RichText(
+          text: TextSpan(
+            children: [
+              TextSpan(text: "(" + word["detail"] + ")\n", style: _subFont),
+              TextSpan(text: age + "   ", style: _ageFont),
+              TextSpan(text: type, style: _typeFont)
+            ],
+          ),
         ),
         isThreeLine: true,
         trailing: Icon(Icons.create, color: Colors.pink),

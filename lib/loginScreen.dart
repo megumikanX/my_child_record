@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'main.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class LoginScreen extends StatelessWidget {
   LoginScreen({Key key}) : super(key: key);
@@ -10,8 +11,8 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: Icon(Icons.child_care),
-        title: const Text('うちの子語録'),
+        //leading: Icon(Icons.child_care),
+        title: const Text('ログイン'),
         backgroundColor: Colors.pinkAccent,
       ),
       body: Padding(
@@ -29,6 +30,7 @@ class LoginForm extends StatefulWidget {
 
 class _LoginFormState extends State<LoginForm> {
   final _auth = FirebaseAuth.instance;
+  final _firestore = Firestore.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   String email;
@@ -60,13 +62,15 @@ class _LoginFormState extends State<LoginForm> {
     }
   }
 
-  //ページ遷移
-  void transitionNextPage(FirebaseUser user) {
+  //ログイン後
+  void transitionNextPage(FirebaseUser user) async {
     if (user == null) return;
 
-//    Navigator.push(context, MaterialPageRoute(builder: (context) =>
-//        NextPage(userData: user)
-//    ));
+    final result =
+        await _firestore.collection('users').document(user.uid).setData({
+      'name': ' ',
+      'recentLoginAt': DateTime.now(),
+    });
 
     Navigator.push(
         context,

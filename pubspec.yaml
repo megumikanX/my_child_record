@@ -27,5 +27,10 @@ flutter:
   uses-material-design: true
   assets:
     - images/photo.png
+  fonts:
+    - family: TypeGothic
+      fonts:
+        - asset: fonts/07LogoTypeGothic-Condense.ttf
+          weight: 400
 
 

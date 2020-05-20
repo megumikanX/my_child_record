@@ -82,11 +82,13 @@ class _InputFormWidgetState extends State<InputFormWidget> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
+            Container(padding: EdgeInsets.all(8.0), child: Text('子が発した言葉の記録')),
             TextFormField(
               initialValue:
                   (widget.record != null) ? widget.record["title"] : '',
               decoration: const InputDecoration(
-                hintText: '子供の可愛い言い間違えや名言を登録しよう',
+                hintText: '例：　すたべっきー',
+                border: OutlineInputBorder(),
               ),
               validator: (value) {
                 // _formKey.currentState.validate()でコールされる
@@ -104,11 +106,13 @@ class _InputFormWidgetState extends State<InputFormWidget> {
                 //Navigator.of(context).pop(value);
               },
             ),
+            Container(padding: EdgeInsets.all(8.0), child: Text('意味や説明')),
             TextFormField(
               initialValue:
                   (widget.record != null) ? widget.record["detail"] : '',
               decoration: const InputDecoration(
-                hintText: '意味や説明を簡単に',
+                hintText: '例：　スパゲッティー',
+                border: OutlineInputBorder(),
               ),
               validator: (value) {
                 // _formKey.currentState.validate()でコールされる
@@ -187,7 +191,7 @@ class _InputFormWidgetState extends State<InputFormWidget> {
                     //新規登録の場合
                     if (widget.record == null) {
                       final result = await _firestore.collection('words').add({
-                        'userID': loggedInUser.email,
+                        'userID': loggedInUser.uid,
                         'title': wordText,
                         'detail': detailText,
                         'ageOption': age,
@@ -206,6 +210,9 @@ class _InputFormWidgetState extends State<InputFormWidget> {
                       await ref.updateData({
                         'title': wordText,
                         'detail': detailText,
+                        'ageOption': age,
+                        'typeOption': type,
+                        'isPublic': public,
                         'updatedAt': DateTime.now()
                       });
                     }

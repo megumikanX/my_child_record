@@ -16,7 +16,18 @@ class PublicListPageWidget extends StatefulWidget {
 class PublicListPageWidgetState extends State<PublicListPageWidget> {
   List<String> _saved = List<String>();
   final TextStyle _biggerFont = TextStyle(fontSize: 20.0);
-  final TextStyle _subFont = TextStyle(color: Colors.deepPurple[700]);
+  final TextStyle _subFont =
+      TextStyle(color: Colors.grey[500], fontFamily: 'TypeGothic', height: 1.2);
+  final TextStyle _ageFont = TextStyle(
+      color: Colors.pinkAccent,
+      fontFamily: 'TypeGothic',
+      height: 2.0,
+      fontSize: 12.0);
+  final TextStyle _typeFont = TextStyle(
+      color: Colors.deepPurple[700],
+      fontFamily: 'TypeGothic',
+      height: 2.0,
+      fontSize: 12.0);
   final TextStyle _counterFont = TextStyle(color: Colors.pinkAccent[700]);
 
   final List<String> ageOption = ['2〜3歳', '4〜5歳', '6歳以上'];
@@ -191,9 +202,14 @@ class PublicListPageWidgetState extends State<PublicListPageWidget> {
           word["title"],
           style: _biggerFont,
         ),
-        subtitle: Text(
-          word["detail"] + "\n" + age + " " + type,
-          style: _subFont,
+        subtitle: RichText(
+          text: TextSpan(
+            children: [
+              TextSpan(text: "(" + word["detail"] + ")\n", style: _subFont),
+              TextSpan(text: age + "   ", style: _ageFont),
+              TextSpan(text: type, style: _typeFont)
+            ],
+          ),
         ),
         isThreeLine: true,
         trailing: Icon(
@@ -203,30 +219,30 @@ class PublicListPageWidgetState extends State<PublicListPageWidget> {
         onTap: () async {
           if (alreadySaved) {
             decrementCounter(index);
-            _saved.remove(word["documentID"]);
+            setState(() {
+              _saved.remove(word["documentID"]);
+            });
             await _firestore
                 .collection('words')
                 .document(word["documentID"])
                 .updateData({'favCount': word["favCount"] - 1});
-//            setState(() {
-//              _saved.remove(word["documentID"]);
-//            });
-//            decrementCounter(index);
+            await _firestore
+                .collection('users')
+                .document(loggedInUser.uid)
+                .updateData({'favWordIDs': _saved});
           } else {
             incrementCounter(index);
-            await _firestore
-                .collection('words')
-                .document(word["documentID"])
-                .updateData({'favCount': word["favCount"] + 1});
             setState(() {
               _saved.add(word["documentID"]);
             });
             await _firestore
+                .collection('words')
+                .document(word["documentID"])
+                .updateData({'favCount': word["favCount"] + 1});
+            await _firestore
                 .collection('users')
                 .document(loggedInUser.uid)
-                .updateData(
-                    //{'favWordIDs': FieldValue.arrayUnion(word["documentID"])});
-                    {'favWordIDs': _saved});
+                .updateData({'favWordIDs': _saved});
           }
         },
       ),

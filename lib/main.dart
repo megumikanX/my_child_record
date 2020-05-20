@@ -10,7 +10,7 @@ void main() => runApp(MyApp());
 
 // アプリ
 class MyApp extends StatelessWidget {
-  static const String _title = 'うちの子語録';
+  static const String _title = 'うちのこ語録';
 
   @override
   Widget build(BuildContext context) {
@@ -18,6 +18,7 @@ class MyApp extends StatelessWidget {
       title: _title,
       theme: new ThemeData(
         primaryColor: Colors.pink,
+        fontFamily: 'TypeGothic',
       ),
       initialRoute: '/',
       routes: <String, WidgetBuilder>{
@@ -45,7 +46,7 @@ class _MainPageState extends State<MainPageWidget> {
   final _pageWidgets = [
     PublicListPageWidget(),
     ListPageWidget(),
-    PageWidget(color: Colors.amber[100], title: '設定'),
+    PageWidget(),
   ];
 
   @override
@@ -56,8 +57,11 @@ class _MainPageState extends State<MainPageWidget> {
   }
 
   //ボトムナビでメニューが選ばれた時
-  void _onItemTapped(int index) {
+  void onMenuSelected(int index) {
     setState(() {
+      if (index == null) {
+        index = 1;
+      }
       _selectedIndex = index;
     });
   }
@@ -69,7 +73,7 @@ class _MainPageState extends State<MainPageWidget> {
       backgroundColor: Colors.deepPurple[50],
       appBar: AppBar(
         leading: Icon(Icons.child_care),
-        title: const Text('うちの子語録'),
+        title: const Text('うちのこ語録'),
         backgroundColor: Colors.pinkAccent,
       ),
       body: _pageWidgets.elementAt(_selectedIndex),
@@ -101,7 +105,7 @@ class _MainPageState extends State<MainPageWidget> {
         selectedItemColor: Colors.white,
         unselectedItemColor: Colors.deepPurple[100],
         backgroundColor: Colors.deepPurple[300],
-        onTap: _onItemTapped,
+        onTap: onMenuSelected,
       ),
     );
   }
