@@ -35,7 +35,7 @@ class ListPageWidgetState extends State<ListPageWidget> {
 
   List<Map> _myWords = List<Map>();
   String _uid = 'not login';
-  String _email = 'not login';
+  bool _isLogin = false;
 
   @override
   void initState() {
@@ -49,7 +49,7 @@ class ListPageWidgetState extends State<ListPageWidget> {
   void didUpdateWidget(ListPageWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    //getCurrentUser();
+    getCurrentUser();
     getMyWords();
   }
 
@@ -58,12 +58,13 @@ class ListPageWidgetState extends State<ListPageWidget> {
       final user = await _auth.currentUser();
       if (user != null) {
         loggedInUser = user;
-        print(loggedInUser.email);
-        print(loggedInUser.uid);
         _uid = loggedInUser.uid;
         setState(() {
-          _email = loggedInUser.email;
+          //_email = loggedInUser.email;
+          _isLogin = true;
         });
+        print(loggedInUser.email);
+        print(loggedInUser.uid);
         getMyWords();
       } else {
         print('not login');
@@ -100,17 +101,30 @@ class ListPageWidgetState extends State<ListPageWidget> {
     print('Build --> myListPageWidget');
     return Scaffold(
       backgroundColor: Colors.pink[50],
-      //body: widget.isLogin ? _buildListView() : Text('ログインしてね'),
-      body: Column(
-        children: <Widget>[
-          Text(_email),
-          Expanded(child: _buildListView()),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        label: Text('書く'),
-        icon: Icon(Icons.create),
-        backgroundColor: Colors.pinkAccent,
+      body: (_isLogin)
+          ? _buildListView()
+          : Column(
+              children: <Widget>[
+                Text('ログインすると「うちのこ語録」を使用できます。'),
+                RaisedButton(
+                    child: Text('ログイン'),
+                    onPressed: () async {
+                      await Navigator.of(context).pushNamed('/login');
+                    }),
+              ],
+            ),
+//      body: Column(
+//        children: <Widget>[
+//          Text(_email),
+//          Expanded(child: _buildListView()),
+//        ],
+//      ),
+      floatingActionButton: Visibility(
+        visible: _isLogin,
+        child: FloatingActionButton.extended(
+          label: Text('書く'),
+          icon: Icon(Icons.create),
+          backgroundColor: Colors.pinkAccent,
 //        onPressed: () async {
 //          final result = await Navigator.of(context).pushNamed('/input');
 //          if (result != null) {
@@ -118,14 +132,15 @@ class ListPageWidgetState extends State<ListPageWidget> {
 //            print(contentText);
 //            //_myWords.add(result);
 //          }
-        onPressed: () {
-          Map record;
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => InputScreen(record, getMyWords),
-              ));
-        },
+          onPressed: () {
+            Map record;
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => InputScreen(record, getMyWords),
+                ));
+          },
+        ),
       ),
     );
   }

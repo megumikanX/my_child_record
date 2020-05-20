@@ -85,54 +85,62 @@ class _LoginFormState extends State<LoginForm> {
       child: Column(
         children: <Widget>[
           RaisedButton(
-            child: Text('Sign in Google'),
+            child: Text('Sign in with Google'),
             onPressed: () {
               _handleSignIn()
                   .then((FirebaseUser user) => transitionNextPage(user))
                   .catchError((e) => print(e));
             },
           ),
-          TextFormField(
-            textAlign: TextAlign.center,
-            keyboardType: TextInputType.emailAddress,
-            onChanged: (value) {
-              email = value;
-            },
-            decoration: const InputDecoration(
-              hintText: 'Email',
-            ),
-          ),
-          TextFormField(
-            textAlign: TextAlign.center,
-            obscureText: true,
-            onChanged: (value) {
-              password = value;
-            },
-            decoration: const InputDecoration(
-              hintText: 'Password',
-            ),
-          ),
           RaisedButton(
-              child: Text('login'),
-              onPressed: () async {
-                try {
-                  final user = await _auth.signInWithEmailAndPassword(
-                      email: email, password: password);
-                  final loginUser = await _auth.currentUser();
-                  if (user != null) {
-                    print('login ok');
-                    print(loginUser.uid);
-                    //Navigator.of(context).pushNamed('/');
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => MainPageWidget(),
-                        ));
-                  }
-                } catch (e) {
-                  print(e);
-                }
-              })
+            child: Text('Sign in with Apple'),
+            onPressed: () {
+              _handleSignIn()
+                  .then((FirebaseUser user) => transitionNextPage(user))
+                  .catchError((e) => print(e));
+            },
+          ),
+//          TextFormField(
+//            textAlign: TextAlign.center,
+//            keyboardType: TextInputType.emailAddress,
+//            onChanged: (value) {
+//              email = value;
+//            },
+//            decoration: const InputDecoration(
+//              hintText: 'Email',
+//            ),
+//          ),
+//          TextFormField(
+//            textAlign: TextAlign.center,
+//            obscureText: true,
+//            onChanged: (value) {
+//              password = value;
+//            },
+//            decoration: const InputDecoration(
+//              hintText: 'Password',
+//            ),
+//          ),
+//          RaisedButton(
+//              child: Text('login'),
+//              onPressed: () async {
+//                try {
+//                  final user = await _auth.signInWithEmailAndPassword(
+//                      email: email, password: password);
+//                  final loginUser = await _auth.currentUser();
+//                  if (user != null) {
+//                    print('login ok');
+//                    print(loginUser.uid);
+//                    //Navigator.of(context).pushNamed('/');
+//                    Navigator.push(
+//                        context,
+//                        MaterialPageRoute(
+//                          builder: (context) => MainPageWidget(),
+//                        ));
+//                  }
+//                } catch (e) {
+//                  print(e);
+//                }
+//              })
         ],
       ),
     );

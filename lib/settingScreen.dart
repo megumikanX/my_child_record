@@ -60,38 +60,38 @@ class PageWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Center(
-        child: Column(
-          children: <Widget>[
-            RaisedButton(
-              child: Text('Sign in Google'),
+      padding: EdgeInsets.all(8.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+//            RaisedButton(
+//              child: Text('Sign in Google'),
+//              onPressed: () {
+//                _handleSignIn()
+//                    .then((FirebaseUser user) => transitionNextPage(user))
+//                    .catchError((e) => print(e));
+//              },
+//            ),
+//            RaisedButton(
+//                child: Text('新規登録'),
+//                onPressed: () async {
+//                  await Navigator.of(context).pushNamed('/register');
+//                }),
+          RaisedButton(
+              child: Text('ログイン'),
+              onPressed: () async {
+                await Navigator.of(context).pushNamed('/login');
+              }),
+          RaisedButton(
+              child: Text('ログアウト'),
               onPressed: () {
-                _handleSignIn()
-                    .then((FirebaseUser user) => transitionNextPage(user))
-                    .catchError((e) => print(e));
-              },
-            ),
-            RaisedButton(
-                child: Text('新規登録'),
-                onPressed: () async {
-                  await Navigator.of(context).pushNamed('/register');
-                }),
-            RaisedButton(
-                child: Text('ログイン'),
-                onPressed: () async {
-                  await Navigator.of(context).pushNamed('/login');
-                }),
-            RaisedButton(
-                child: Text('ログアウト'),
-                onPressed: () {
-                  _auth.signOut();
-                }),
-            //RegistrationScreen(),
-            // Image(
-            //   image: AssetImage('images/photo.png'),
-            // ),
-          ],
-        ),
+                _auth.signOut();
+              }),
+          //RegistrationScreen(),
+          // Image(
+          //   image: AssetImage('images/photo.png'),
+          // ),
+        ],
       ),
     );
   }

@@ -36,6 +36,7 @@ class PublicListPageWidgetState extends State<PublicListPageWidget> {
   final _auth = FirebaseAuth.instance;
   final _firestore = Firestore.instance;
   FirebaseUser loggedInUser;
+  bool _isLogin = false;
 
   List<Map> _allWords = List<Map>();
 
@@ -82,6 +83,7 @@ class PublicListPageWidgetState extends State<PublicListPageWidget> {
       final user = await _auth.currentUser();
       if (user != null) {
         loggedInUser = user;
+        _isLogin = true;
 
         getFavList();
       } else {
@@ -212,9 +214,12 @@ class PublicListPageWidgetState extends State<PublicListPageWidget> {
           ),
         ),
         isThreeLine: true,
-        trailing: Icon(
-          alreadySaved ? Icons.favorite : Icons.favorite_border,
-          color: alreadySaved ? Colors.pink : null,
+        trailing: Visibility(
+          visible: _isLogin,
+          child: Icon(
+            alreadySaved ? Icons.favorite : Icons.favorite_border,
+            color: alreadySaved ? Colors.pink : null,
+          ),
         ),
         onTap: () async {
           if (alreadySaved) {
