@@ -82,10 +82,11 @@ class _InputFormWidgetState extends State<InputFormWidget> {
         child: SingleChildScrollView(
           padding: EdgeInsets.all(12.0),
           child: Column(
-            //crossAxisAlignment: CrossAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Container(
-                  padding: EdgeInsets.all(8.0), child: Text('子が発した言葉の記録')),
+                  padding: EdgeInsets.all(8.0),
+                  child: Text('子が発した面白かわいい言葉を記録してみよう。')),
               TextFormField(
                 keyboardType: TextInputType.multiline,
                 maxLines: null,
@@ -190,49 +191,79 @@ class _InputFormWidgetState extends State<InputFormWidget> {
               //publicOptions(),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
-                child: RaisedButton(
-                  onPressed: () async {
-                    if (_formKey.currentState.validate()) {
-                      //this._formKey.currentState.save();
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: RaisedButton(
+                          child: Row(
+                            children: <Widget>[
+                              Icon(Icons.delete_forever),
+                              Text('削除'),
+                            ],
+                          ),
+                          color: Colors.white,
+                          elevation: 8.0,
+                          shape: OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(8.0)),
+                          ),
+                          onPressed: () {}),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: RaisedButton.icon(
+                        icon: Icon(
+                          Icons.save_alt,
+                        ),
+                        label: Text('保存'),
+                        elevation: 8.0,
+                        color: Colors.deepPurple,
+                        textColor: Colors.white,
+                        shape: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                        ),
+                        onPressed: () async {
+                          if (_formKey.currentState.validate()) {
+                            //this._formKey.currentState.save();
 
-                      //新規登録の場合
-                      if (widget.record == null) {
-                        final result =
-                            await _firestore.collection('words').add({
-                          'userID': loggedInUser.uid,
-                          'title': wordText,
-                          'detail': detailText,
-                          'ageOption': age,
-                          'typeOption': type,
-                          'favCount': 0,
-                          'isPublic': public,
-                          'createdAt': DateTime.now(),
-                          'updatedAt': DateTime.now(),
-                        });
+                            //新規登録の場合
+                            if (widget.record == null) {
+                              final result =
+                                  await _firestore.collection('words').add({
+                                'userID': loggedInUser.uid,
+                                'title': wordText,
+                                'detail': detailText,
+                                'ageOption': age,
+                                'typeOption': type,
+                                'favCount': 0,
+                                'isPublic': public,
+                                'createdAt': DateTime.now(),
+                                'updatedAt': DateTime.now(),
+                              });
 
-                        //更新の場合
-                      } else {
-                        final ref = _firestore
-                            .collection('words')
-                            .document(widget.record["documentID"]);
-                        await ref.updateData({
-                          'title': wordText,
-                          'detail': detailText,
-                          'ageOption': age,
-                          'typeOption': type,
-                          'isPublic': public,
-                          'updatedAt': DateTime.now()
-                        });
-                      }
-                      widget.getWords();
-                      Navigator.of(context).pop();
-                    }
-                  },
-                  child: Text('保存'),
-                  color: Colors.deepPurple[100],
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
+                              //更新の場合
+                            } else {
+                              final ref = _firestore
+                                  .collection('words')
+                                  .document(widget.record["documentID"]);
+                              await ref.updateData({
+                                'title': wordText,
+                                'detail': detailText,
+                                'ageOption': age,
+                                'typeOption': type,
+                                'isPublic': public,
+                                'updatedAt': DateTime.now()
+                              });
+                            }
+                            widget.getWords();
+                            Navigator.of(context).pop();
+                          }
+                        },
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
