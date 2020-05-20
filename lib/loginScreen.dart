@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'main.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:apple_sign_in/apple_sign_in.dart';
+import 'package:flutter_signin_button/flutter_signin_button.dart';
 
 class LoginScreen extends StatelessWidget {
   LoginScreen({Key key}) : super(key: key);
@@ -32,6 +34,7 @@ class _LoginFormState extends State<LoginForm> {
   final _auth = FirebaseAuth.instance;
   final _firestore = Firestore.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final AppleSignIn _appleSignIn = AppleSignIn();
 
   String email;
   String password;
@@ -82,24 +85,47 @@ class _LoginFormState extends State<LoginForm> {
   @override
   Widget build(BuildContext context) {
     return Form(
-      child: Column(
-        children: <Widget>[
-          RaisedButton(
-            child: Text('Sign in with Google'),
-            onPressed: () {
-              _handleSignIn()
-                  .then((FirebaseUser user) => transitionNextPage(user))
-                  .catchError((e) => print(e));
-            },
-          ),
-          RaisedButton(
-            child: Text('Sign in with Apple'),
-            onPressed: () {
-              _handleSignIn()
-                  .then((FirebaseUser user) => transitionNextPage(user))
-                  .catchError((e) => print(e));
-            },
-          ),
+      child: Center(
+        child: Column(
+          children: <Widget>[
+//          RaisedButton(
+//            child: Text('Googleでサインイン'),
+//            onPressed: () {
+//              _handleSignIn()
+//                  .then((FirebaseUser user) => transitionNextPage(user))
+//                  .catchError((e) => print(e));
+//            },
+//          ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SignInButton(
+                Buttons.Apple,
+                // mini: true,
+                text: 'Appleでサインイン',
+                // padding: const EdgeInsets.all(0),
+                shape: StadiumBorder(
+                  side: const BorderSide(width: 1),
+                ),
+                onPressed: () {},
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SignInButton(
+                Buttons.Google,
+                // mini: true,
+                text: 'Googleでサインイン',
+                // padding: const EdgeInsets.all(0),
+                shape: StadiumBorder(
+                  side: const BorderSide(width: 1),
+                ),
+                onPressed: () {
+                  _handleSignIn()
+                      .then((FirebaseUser user) => transitionNextPage(user))
+                      .catchError((e) => print(e));
+                },
+              ),
+            )
 //          TextFormField(
 //            textAlign: TextAlign.center,
 //            keyboardType: TextInputType.emailAddress,
@@ -141,7 +167,8 @@ class _LoginFormState extends State<LoginForm> {
 //                  print(e);
 //                }
 //              })
-        ],
+          ],
+        ),
       ),
     );
   }

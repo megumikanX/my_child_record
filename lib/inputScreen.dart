@@ -87,6 +87,8 @@ class _InputFormWidgetState extends State<InputFormWidget> {
               Container(
                   padding: EdgeInsets.all(8.0), child: Text('子が発した言葉の記録')),
               TextFormField(
+                keyboardType: TextInputType.multiline,
+                maxLines: null,
                 initialValue:
                     (widget.record != null) ? widget.record["title"] : '',
                 decoration: const InputDecoration(
@@ -111,6 +113,8 @@ class _InputFormWidgetState extends State<InputFormWidget> {
               ),
               Container(padding: EdgeInsets.all(8.0), child: Text('意味や説明')),
               TextFormField(
+                keyboardType: TextInputType.multiline,
+                maxLines: null,
                 initialValue:
                     (widget.record != null) ? widget.record["detail"] : '',
                 decoration: const InputDecoration(
