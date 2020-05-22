@@ -5,6 +5,7 @@ import 'settingScreen.dart';
 import 'registrationScreen.dart';
 import 'loginScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+//import 'package:flutter_icons/flutter_icons.dart';
 
 void main() => runApp(MyApp());
 

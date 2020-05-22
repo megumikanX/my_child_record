@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import "package:intl/intl.dart";
+import 'package:intl/date_symbol_data_local.dart';
 
 // みんなの語録リストのページ
 class PublicListPageWidget extends StatefulWidget {
@@ -15,23 +17,37 @@ class PublicListPageWidget extends StatefulWidget {
 
 class PublicListPageWidgetState extends State<PublicListPageWidget> {
   List<String> _saved = List<String>();
-  final TextStyle _biggerFont = TextStyle(fontSize: 20.0);
-  final TextStyle _subFont =
-      TextStyle(color: Colors.grey[500], fontFamily: 'TypeGothic', height: 1.2);
+  final TextStyle _biggerFont = TextStyle(fontSize: 20.0, height: 1.2);
+
+  final TextStyle _detailFont = TextStyle(
+    color: Colors.grey[500],
+    fontFamily: 'TypeGothic',
+    fontSize: 14.0,
+    height: 1.2,
+  );
+
+  final TextStyle _subFont = TextStyle(
+      color: Colors.grey[500],
+      fontFamily: 'TypeGothic',
+      fontSize: 12.0,
+      height: 1.2);
+
   final TextStyle _ageFont = TextStyle(
       color: Colors.pinkAccent,
       fontFamily: 'TypeGothic',
       height: 2.0,
       fontSize: 12.0);
+
   final TextStyle _typeFont = TextStyle(
       color: Colors.deepPurple[700],
       fontFamily: 'TypeGothic',
       height: 2.0,
       fontSize: 12.0);
+
   final TextStyle _counterFont = TextStyle(color: Colors.pinkAccent[700]);
 
   final List<String> ageOption = ['2〜3歳', '4〜5歳', '6歳以上'];
-  final List<String> typeOption = ['言い間違い', '名言', '印象に残る言葉'];
+  final List<String> typeOption = ['言い間違い', '名言/迷言', '印象に残る'];
 
   final _auth = FirebaseAuth.instance;
   final _firestore = Firestore.instance;
@@ -47,6 +63,7 @@ class PublicListPageWidgetState extends State<PublicListPageWidget> {
   void initState() {
     super.initState();
 
+    initializeDateFormatting();
     getAllWords();
     getCurrentUser();
   }
@@ -134,12 +151,11 @@ class PublicListPageWidgetState extends State<PublicListPageWidget> {
           Row(
             children: <Widget>[
               Padding(
-                padding: const EdgeInsets.symmetric(
-                    vertical: 12.0, horizontal: 20.0),
+                padding: const EdgeInsets.all(12.0),
                 child: CupertinoSlidingSegmentedControl<int>(
                   children: {0: Text("新着順"), 1: Text("人気順")},
                   groupValue: orderByValue,
-                  thumbColor: Colors.amberAccent[100],
+                  thumbColor: Colors.white,
                   onValueChanged: (int newValue) {
                     setState(() {
                       orderByValue = newValue;
@@ -153,7 +169,7 @@ class PublicListPageWidgetState extends State<PublicListPageWidget> {
                 child: CupertinoSlidingSegmentedControl<int>(
                   children: {0: Text("すべて"), 1: Text("♡のみ")},
                   groupValue: filterValue,
-                  thumbColor: Colors.amberAccent[100],
+                  thumbColor: Colors.white,
                   onValueChanged: (int newValue) {
                     setState(() {
                       filterValue = newValue;
@@ -173,7 +189,8 @@ class PublicListPageWidgetState extends State<PublicListPageWidget> {
 
   Widget _buildListView() {
     return ListView.builder(
-      padding: const EdgeInsets.all(16.0),
+      //padding: const EdgeInsets.all(0),
+      padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 8.0),
       itemBuilder: (context, i) {
         return _buildRow(_allWords[i], i);
       },
@@ -183,23 +200,24 @@ class PublicListPageWidgetState extends State<PublicListPageWidget> {
 
   Widget _buildRow(Map word, int index) {
     print('Build --> PublicListPageWidgetRow' + index.toString());
-    //print(word["documentID"]);
-    //print(_saved);
     final bool alreadySaved = _saved.contains(word["documentID"]);
-    //print(alreadySaved);
     final String age = ageOption[word["ageOption"]];
     final String type = typeOption[word["typeOption"]];
+
+    //var formatter = new DateFormat('yyyy-MM-dd(E) HH:mm', "ja_JP");
+    var formatter = new DateFormat('yyyy-MM-dd', "ja_JP");
+    final String createdAt = formatter.format(word["createdAt"].toDate());
     int favCount = word["favCount"];
 
     return Card(
       color: Colors.yellow[50],
       child: ListTile(
-        leading: Column(
-          children: <Widget>[
-            Icon(Icons.child_care),
-            Text(favCount.toRadixString(10), style: _counterFont),
-          ],
-        ),
+//        leading: Column(
+//          children: <Widget>[
+//            Icon(Icons.child_care),
+//            Text(favCount.toRadixString(10), style: _counterFont),
+//          ],
+//        ),
         title: Text(
           word["title"],
           style: _biggerFont,
@@ -207,21 +225,30 @@ class PublicListPageWidgetState extends State<PublicListPageWidget> {
         subtitle: RichText(
           text: TextSpan(
             children: [
-              TextSpan(text: "(" + word["detail"] + ")\n", style: _subFont),
+              TextSpan(text: "(" + word["detail"] + ")\n", style: _detailFont),
               TextSpan(text: age + "   ", style: _ageFont),
-              TextSpan(text: type, style: _typeFont)
+              TextSpan(text: type + "   ", style: _typeFont),
+              TextSpan(text: createdAt, style: _subFont)
             ],
           ),
         ),
         isThreeLine: true,
-        trailing: Visibility(
-          visible: _isLogin,
-          child: Icon(
-            alreadySaved ? Icons.favorite : Icons.favorite_border,
-            color: alreadySaved ? Colors.pink : null,
-          ),
+        trailing: Column(
+          children: <Widget>[
+            Text(favCount.toRadixString(10), style: _counterFont),
+            Visibility(
+              visible: _isLogin,
+              child: Icon(
+                alreadySaved ? Icons.favorite : Icons.favorite_border,
+                color: alreadySaved ? Colors.pink : null,
+              ),
+            ),
+          ],
         ),
         onTap: () async {
+          if (!_isLogin) {
+            return;
+          }
           if (alreadySaved) {
             decrementCounter(index);
             setState(() {

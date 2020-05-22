@@ -20,14 +20,11 @@ class ListPageWidget extends StatefulWidget {
 
 class ListPageWidgetState extends State<ListPageWidget> {
   final TextStyle _biggerFont =
-      TextStyle(fontSize: 20.0, fontFamily: 'TypeGothic');
-  final TextStyle _subFont = TextStyle(
-    color: Colors.deepPurple[700],
-    fontFamily: 'TypeGothic',
-  );
+      TextStyle(fontSize: 20.0, fontFamily: 'TypeGothic', height: 1.3);
 
   final List<String> ageOption = ['2〜3歳', '4〜5歳', '6歳以上'];
-  final List<String> typeOption = ['言い間違い', '名言', '印象に残る言葉'];
+  final List<String> typeOption = ['言い間違い', '名言/迷言', '印象に残る言葉'];
+  final List<String> publicOption = ['非公開', '公開'];
 
   final _auth = FirebaseAuth.instance;
   final _firestore = Firestore.instance;
@@ -103,15 +100,24 @@ class ListPageWidgetState extends State<ListPageWidget> {
       backgroundColor: Colors.pink[50],
       body: (_isLogin)
           ? _buildListView()
-          : Column(
-              children: <Widget>[
-                Text('ログインすると「うちのこ語録」を使用できます。'),
-                RaisedButton(
-                    child: Text('ログイン'),
-                    onPressed: () async {
-                      await Navigator.of(context).pushNamed('/login');
-                    }),
-              ],
+          : Container(
+              width: double.infinity,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(30.0),
+                    child: Text('ログインすると\n「うちのこ語録」を利用できます。',
+                        style: TextStyle(height: 1.5)),
+                  ),
+                  RaisedButton(
+                      child: Text('ログイン'),
+                      color: Colors.white,
+                      onPressed: () async {
+                        await Navigator.of(context).pushNamed('/login');
+                      }),
+                ],
+              ),
             ),
 //      body: Column(
 //        children: <Widget>[
@@ -147,7 +153,7 @@ class ListPageWidgetState extends State<ListPageWidget> {
 
   Widget _buildListView() {
     return ListView.builder(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(8.0),
       itemBuilder: (context, i) {
         return _buildRow(_myWords[i]);
       },
@@ -158,9 +164,21 @@ class ListPageWidgetState extends State<ListPageWidget> {
   Widget _buildRow(Map word) {
     final String age = ageOption[word["ageOption"]];
     final String type = typeOption[word["typeOption"]];
+    final String public = publicOption[word["isPublic"]];
+
+    final TextStyle _detailFont = TextStyle(
+      color: Colors.grey[500],
+      fontFamily: 'TypeGothic',
+      fontSize: 14.0,
+      height: 1.3,
+    );
 
     final TextStyle _subFont = TextStyle(
-        color: Colors.grey[500], fontFamily: 'TypeGothic', height: 1.2);
+      color: Colors.grey[500],
+      fontFamily: 'TypeGothic',
+      height: 1.2,
+      fontSize: 12.0,
+    );
     final TextStyle _ageFont = TextStyle(
         color: Colors.pinkAccent,
         fontFamily: 'TypeGothic',
@@ -175,7 +193,7 @@ class ListPageWidgetState extends State<ListPageWidget> {
     return Card(
       color: Colors.yellow[50],
       child: ListTile(
-        leading: Icon(Icons.child_care),
+        //leading: Icon(Icons.child_care),
         title: Text(
           word["title"],
           style: _biggerFont,
@@ -183,9 +201,10 @@ class ListPageWidgetState extends State<ListPageWidget> {
         subtitle: RichText(
           text: TextSpan(
             children: [
-              TextSpan(text: "(" + word["detail"] + ")\n", style: _subFont),
+              TextSpan(text: "(" + word["detail"] + ")\n", style: _detailFont),
               TextSpan(text: age + "   ", style: _ageFont),
-              TextSpan(text: type, style: _typeFont)
+              TextSpan(text: type + "   ", style: _typeFont),
+              TextSpan(text: public, style: _subFont),
             ],
           ),
         ),

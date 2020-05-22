@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
 
 // 入力画面
 class InputScreen extends StatelessWidget {
@@ -41,7 +42,7 @@ class _InputFormWidgetState extends State<InputFormWidget> {
   final List<String> ageOption = ['2〜3歳', '4〜5歳', '6歳以上'];
 
   int type = 1;
-  final List<String> typeOption = ['言い間違い', '名言', '印象に残る言葉'];
+  final List<String> typeOption = ['言い間違い', '名言/迷言', '印象に残る言葉'];
 
   int public = 0;
   final List<String> publicOption = ['非公開', '公開'];
@@ -73,6 +74,51 @@ class _InputFormWidgetState extends State<InputFormWidget> {
     }
   }
 
+  showDebugPrint() {
+    debugPrint('Print from Callback Function');
+  }
+
+  deleteWord() async {
+    final result = await _firestore
+        .collection('words')
+        .document(widget.record["documentID"])
+        .delete();
+    widget.getWords();
+    Navigator.of(context).pop();
+  }
+
+  saveWord() async {
+    //新規登録の場合
+    if (widget.record == null) {
+      final result = await _firestore.collection('words').add({
+        'userID': loggedInUser.uid,
+        'title': wordText,
+        'detail': detailText,
+        'ageOption': age,
+        'typeOption': type,
+        'favCount': 0,
+        'isPublic': public,
+        'createdAt': DateTime.now(),
+        'updatedAt': DateTime.now(),
+      });
+
+      //更新の場合
+    } else {
+      final ref =
+          _firestore.collection('words').document(widget.record["documentID"]);
+      await ref.updateData({
+        'title': wordText,
+        'detail': detailText,
+        'ageOption': age,
+        'typeOption': type,
+        'isPublic': public,
+        'updatedAt': DateTime.now()
+      });
+    }
+    widget.getWords();
+    Navigator.of(context).pop();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -90,6 +136,7 @@ class _InputFormWidgetState extends State<InputFormWidget> {
               TextFormField(
                 keyboardType: TextInputType.multiline,
                 maxLines: null,
+                maxLength: 100,
                 initialValue:
                     (widget.record != null) ? widget.record["title"] : '',
                 decoration: const InputDecoration(
@@ -99,7 +146,7 @@ class _InputFormWidgetState extends State<InputFormWidget> {
                 validator: (value) {
                   // _formKey.currentState.validate()でコールされる
                   if (value.isEmpty) {
-                    return 'Please enter some text';
+                    return '必須入力です';
                   }
                   return null; // 問題ない場合はnullを返す
                 },
@@ -116,6 +163,7 @@ class _InputFormWidgetState extends State<InputFormWidget> {
               TextFormField(
                 keyboardType: TextInputType.multiline,
                 maxLines: null,
+                maxLength: 100,
                 initialValue:
                     (widget.record != null) ? widget.record["detail"] : '',
                 decoration: const InputDecoration(
@@ -125,7 +173,7 @@ class _InputFormWidgetState extends State<InputFormWidget> {
                 validator: (value) {
                   // _formKey.currentState.validate()でコールされる
                   if (value.isEmpty) {
-                    return 'Please enter some text';
+                    return '必須入力です';
                   }
                   return null; // 問題ない場合はnullを返す
                 },
@@ -144,8 +192,8 @@ class _InputFormWidgetState extends State<InputFormWidget> {
                       selected: age == index,
                       onSelected: (bool selected) {
                         setState(() {
-                          age = selected ? index : null;
-                          print(age);
+                          //age = selected ? index : null;
+                          age = index;
                         });
                       },
                     );
@@ -162,8 +210,8 @@ class _InputFormWidgetState extends State<InputFormWidget> {
                       selected: type == index,
                       onSelected: (bool selected) {
                         setState(() {
-                          type = selected ? index : null;
-                          print(type);
+                          //type = selected ? index : null;
+                          type = index;
                         });
                       },
                     );
@@ -180,8 +228,8 @@ class _InputFormWidgetState extends State<InputFormWidget> {
                       selected: public == index,
                       onSelected: (bool selected) {
                         setState(() {
-                          public = selected ? index : null;
-                          print(public);
+                          //public = selected ? index : null;
+                          public = index;
                         });
                       },
                     );
@@ -209,7 +257,19 @@ class _InputFormWidgetState extends State<InputFormWidget> {
                             borderRadius:
                                 BorderRadius.all(Radius.circular(8.0)),
                           ),
-                          onPressed: () {}),
+                          onPressed: () async {
+                            await AwesomeDialog(
+                                context: context,
+                                headerAnimationLoop: false,
+                                dialogType: DialogType.INFO,
+                                animType: AnimType.BOTTOMSLIDE,
+                                tittle: 'このデータを削除しますか？',
+                                desc: '"' + wordText + '"',
+                                btnCancelOnPress: () {},
+                                btnOkOnPress: () {
+                                  deleteWord();
+                                }).show();
+                          }),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(4.0),
@@ -228,37 +288,20 @@ class _InputFormWidgetState extends State<InputFormWidget> {
                           if (_formKey.currentState.validate()) {
                             //this._formKey.currentState.save();
 
-                            //新規登録の場合
-                            if (widget.record == null) {
-                              final result =
-                                  await _firestore.collection('words').add({
-                                'userID': loggedInUser.uid,
-                                'title': wordText,
-                                'detail': detailText,
-                                'ageOption': age,
-                                'typeOption': type,
-                                'favCount': 0,
-                                'isPublic': public,
-                                'createdAt': DateTime.now(),
-                                'updatedAt': DateTime.now(),
-                              });
-
-                              //更新の場合
-                            } else {
-                              final ref = _firestore
-                                  .collection('words')
-                                  .document(widget.record["documentID"]);
-                              await ref.updateData({
-                                'title': wordText,
-                                'detail': detailText,
-                                'ageOption': age,
-                                'typeOption': type,
-                                'isPublic': public,
-                                'updatedAt': DateTime.now()
-                              });
-                            }
-                            widget.getWords();
-                            Navigator.of(context).pop();
+                            AwesomeDialog(
+                                context: context,
+                                animType: AnimType.LEFTSLIDE,
+                                headerAnimationLoop: false,
+                                dialogType: DialogType.SUCCES,
+                                tittle: '登録しました！',
+                                desc: '',
+                                btnOkOnPress: () {
+                                  saveWord();
+                                },
+                                btnOkIcon: Icons.check_circle,
+                                onDissmissCallback: () {
+                                  debugPrint('Dialog Dissmiss from callback');
+                                }).show();
                           }
                         },
                       ),

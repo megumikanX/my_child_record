@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 // 他のページ
 class PageWidget extends StatelessWidget {
@@ -57,40 +59,129 @@ class PageWidget extends StatelessWidget {
     onMenuSelected();
   }
 
+  void launchURL(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.all(8.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
+      child: Column(
         children: <Widget>[
-//            RaisedButton(
-//              child: Text('Sign in Google'),
-//              onPressed: () {
-//                _handleSignIn()
-//                    .then((FirebaseUser user) => transitionNextPage(user))
-//                    .catchError((e) => print(e));
-//              },
-//            ),
-//            RaisedButton(
-//                child: Text('新規登録'),
-//                onPressed: () async {
-//                  await Navigator.of(context).pushNamed('/register');
-//                }),
-          RaisedButton(
-              child: Text('ログイン'),
-              onPressed: () async {
-                await Navigator.of(context).pushNamed('/login');
-              }),
-          RaisedButton(
-              child: Text('ログアウト'),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: RaisedButton(
+                    color: Colors.white,
+                    shape: StadiumBorder(
+                      side: BorderSide(color: Colors.deepPurple),
+                    ),
+                    child: Text('ログイン'),
+                    onPressed: () async {
+                      await Navigator.of(context).pushNamed('/login');
+                    }),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: RaisedButton(
+                    color: Colors.white,
+                    shape: StadiumBorder(
+                      side: BorderSide(color: Colors.deepPurple),
+                    ),
+                    child: Text('ログアウト'),
+                    onPressed: () {
+                      AwesomeDialog(
+                          context: context,
+                          animType: AnimType.LEFTSLIDE,
+                          headerAnimationLoop: false,
+                          dialogType: DialogType.SUCCES,
+                          tittle: 'ログアウトしました',
+                          desc: ' ',
+                          btnOkOnPress: () {
+                            _auth.signOut();
+                          },
+                          btnOkIcon: Icons.check_circle,
+                          onDissmissCallback: () {
+                            debugPrint('Dialog Dissmiss from callback');
+                          }).show();
+                    }),
+              ),
+              //RegistrationScreen(),
+              // Image(
+              //   image: AssetImage('images/photo.png'),
+              // ),
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: FlatButton(
               onPressed: () {
-                _auth.signOut();
-              }),
-          //RegistrationScreen(),
-          // Image(
-          //   image: AssetImage('images/photo.png'),
-          // ),
+                launchURL('https://flutter.dev');
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Icon(Icons.mail),
+                  Text(
+                    'お問い合わせ',
+                    style: TextStyle(
+                      fontSize: 16,
+                      //decoration: TextDecoration.underline,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: FlatButton(
+              onPressed: () {
+                launchURL('https://flutter.dev');
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Icon(Icons.book),
+                  Text(
+                    'プライバシーポリシー',
+                    style: TextStyle(
+                      fontSize: 16,
+                      //decoration: TextDecoration.underline,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: FlatButton(
+              onPressed: () {
+                launchURL('https://flutter.dev');
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Icon(Icons.star),
+                  Text(
+                    'このアプリを評価する',
+                    style: TextStyle(
+                      fontSize: 16,
+                      //decoration: TextDecoration.underline,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );

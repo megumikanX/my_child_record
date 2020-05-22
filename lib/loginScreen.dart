@@ -5,6 +5,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:apple_sign_in/apple_sign_in.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
+import 'package:modal_progress_hud/modal_progress_hud.dart';
 
 class LoginScreen extends StatelessWidget {
   LoginScreen({Key key}) : super(key: key);
@@ -17,10 +18,7 @@ class LoginScreen extends StatelessWidget {
         title: const Text('ログイン'),
         backgroundColor: Colors.pinkAccent,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(50.0),
-        child: LoginForm(),
-      ),
+      body: LoginForm(),
     );
   }
 }
@@ -36,8 +34,10 @@ class _LoginFormState extends State<LoginForm> {
   final GoogleSignIn _googleSignIn = GoogleSignIn();
   final AppleSignIn _appleSignIn = AppleSignIn();
 
-  String email;
-  String password;
+//  String email;
+//  String password;
+
+  bool showSpinner = false;
 
   Future<FirebaseUser> _handleSignIn() async {
     GoogleSignInAccount googleCurrentUser = _googleSignIn.currentUser;
@@ -66,13 +66,17 @@ class _LoginFormState extends State<LoginForm> {
   }
 
   //ログイン後
-  void transitionNextPage(FirebaseUser user) async {
+  void afterLoginProcess(FirebaseUser user) async {
     if (user == null) return;
 
     final result =
         await _firestore.collection('users').document(user.uid).setData({
       'name': ' ',
       'recentLoginAt': DateTime.now(),
+    });
+
+    setState(() {
+      showSpinner = false;
     });
 
     Navigator.push(
@@ -84,48 +88,55 @@ class _LoginFormState extends State<LoginForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      child: Center(
-        child: Column(
-          children: <Widget>[
+    return ModalProgressHUD(
+      inAsyncCall: showSpinner,
+      child: Form(
+        child: Padding(
+          padding: const EdgeInsets.all(30.0),
+          child: Center(
+            child: Column(
+              children: <Widget>[
 //          RaisedButton(
 //            child: Text('Googleでサインイン'),
 //            onPressed: () {
 //              _handleSignIn()
-//                  .then((FirebaseUser user) => transitionNextPage(user))
+//                  .then((FirebaseUser user) => afterLoginProcess(user))
 //                  .catchError((e) => print(e));
 //            },
 //          ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: SignInButton(
-                Buttons.Apple,
-                // mini: true,
-                text: 'Appleでサインイン',
-                // padding: const EdgeInsets.all(0),
-                shape: StadiumBorder(
-                  side: const BorderSide(width: 1),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SignInButton(
+                    Buttons.Apple,
+                    // mini: true,
+                    text: 'Appleでサインイン',
+                    // padding: const EdgeInsets.all(0),
+                    shape: StadiumBorder(
+                      side: const BorderSide(width: 1),
+                    ),
+                    onPressed: () {},
+                  ),
                 ),
-                onPressed: () {},
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: SignInButton(
-                Buttons.Google,
-                // mini: true,
-                text: 'Googleでサインイン',
-                // padding: const EdgeInsets.all(0),
-                shape: StadiumBorder(
-                  side: const BorderSide(width: 1),
-                ),
-                onPressed: () {
-                  _handleSignIn()
-                      .then((FirebaseUser user) => transitionNextPage(user))
-                      .catchError((e) => print(e));
-                },
-              ),
-            )
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SignInButton(
+                    Buttons.Google,
+                    // mini: true,
+                    text: 'Googleでサインイン',
+                    // padding: const EdgeInsets.all(0),
+                    shape: StadiumBorder(
+                      side: const BorderSide(width: 1),
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        showSpinner = true;
+                      });
+                      _handleSignIn()
+                          .then((FirebaseUser user) => afterLoginProcess(user))
+                          .catchError((e) => print(e));
+                    },
+                  ),
+                )
 //          TextFormField(
 //            textAlign: TextAlign.center,
 //            keyboardType: TextInputType.emailAddress,
@@ -167,7 +178,9 @@ class _LoginFormState extends State<LoginForm> {
 //                  print(e);
 //                }
 //              })
-          ],
+              ],
+            ),
+          ),
         ),
       ),
     );
