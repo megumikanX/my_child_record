@@ -199,7 +199,7 @@ class PublicListPageWidgetState extends State<PublicListPageWidget> {
   }
 
   Widget _buildRow(Map word, int index) {
-    print('Build --> PublicListPageWidgetRow' + index.toString());
+    //print('Build --> PublicListPageWidgetRow' + index.toString());
     final bool alreadySaved = _saved.contains(word["documentID"]);
     final String age = ageOption[word["ageOption"]];
     final String type = typeOption[word["typeOption"]];

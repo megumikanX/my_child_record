@@ -243,36 +243,40 @@ class _InputFormWidgetState extends State<InputFormWidget> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: RaisedButton(
-                          child: Row(
-                            children: <Widget>[
-                              Icon(Icons.delete_forever),
-                              Text('削除'),
-                            ],
-                          ),
-                          color: Colors.white,
-                          elevation: 8.0,
-                          shape: OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(8.0)),
-                          ),
-                          onPressed: () async {
-                            await AwesomeDialog(
-                                context: context,
-                                headerAnimationLoop: false,
-                                dialogType: DialogType.INFO,
-                                animType: AnimType.BOTTOMSLIDE,
-                                tittle: 'このデータを削除しますか？',
-                                desc: '"' + wordText + '"',
-                                btnCancelOnPress: () {},
-                                btnOkOnPress: () {
-                                  deleteWord();
-                                }).show();
-                          }),
+                      padding: const EdgeInsets.all(8.0),
+                      child: Visibility(
+                        visible: widget.record != null,
+                        //削除ボタン
+                        child: RaisedButton(
+                            child: Row(
+                              children: <Widget>[
+                                Icon(Icons.delete_forever),
+                                Text('削除'),
+                              ],
+                            ),
+                            color: Colors.white,
+                            elevation: 8.0,
+                            shape: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(8.0)),
+                            ),
+                            onPressed: () async {
+                              await AwesomeDialog(
+                                  context: context,
+                                  headerAnimationLoop: false,
+                                  dialogType: DialogType.INFO,
+                                  animType: AnimType.BOTTOMSLIDE,
+                                  tittle: 'このデータを削除しますか？',
+                                  desc: '"' + wordText + '"',
+                                  btnCancelOnPress: () {},
+                                  btnOkOnPress: () {
+                                    deleteWord();
+                                  }).show();
+                            }),
+                      ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.all(4.0),
+                      padding: const EdgeInsets.all(8.0),
                       child: RaisedButton.icon(
                         icon: Icon(
                           Icons.save_alt,
