@@ -4,6 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:launch_review/launch_review.dart';
+import 'package:flutter_share/flutter_share.dart';
 
 // 他のページ
 class PageWidget extends StatelessWidget {
@@ -67,17 +69,25 @@ class PageWidget extends StatelessWidget {
     }
   }
 
+  Future<void> share() async {
+    await FlutterShare.share(
+        title: 'うちのこ語録',
+        text: 'うちのこ語録',
+        linkUrl: 'https://flutter.dev/',
+        chooserTitle: '');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(8.0),
+      padding: EdgeInsets.only(top: 50.0),
       child: Column(
         children: <Widget>[
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: EdgeInsets.all(8.0),
                 child: RaisedButton(
                     color: Colors.white,
                     shape: StadiumBorder(
@@ -89,7 +99,7 @@ class PageWidget extends StatelessWidget {
                     }),
               ),
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: EdgeInsets.all(8.0),
                 child: RaisedButton(
                     color: Colors.white,
                     shape: StadiumBorder(
@@ -120,7 +130,7 @@ class PageWidget extends StatelessWidget {
             ],
           ),
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: EdgeInsets.only(top: 20.0),
             child: FlatButton(
               onPressed: () {
                 launchURL('https://flutter.dev');
@@ -141,7 +151,7 @@ class PageWidget extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: EdgeInsets.only(top: 20.0),
             child: FlatButton(
               onPressed: () {
                 launchURL('https://flutter.dev');
@@ -162,17 +172,37 @@ class PageWidget extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: EdgeInsets.only(top: 20.0),
             child: FlatButton(
-              onPressed: () {
-                launchURL('https://flutter.dev');
-              },
+              onPressed: () => LaunchReview.launch(
+                androidAppId: "com.iyaffle.kural",
+                iOSAppId: "585027354",
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Icon(Icons.star),
                   Text(
                     'このアプリを評価する',
+                    style: TextStyle(
+                      fontSize: 16,
+                      //decoration: TextDecoration.underline,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.only(top: 20.0),
+            child: FlatButton(
+              onPressed: share,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Icon(Icons.share),
+                  Text(
+                    'このアプリを友達にすすめる',
                     style: TextStyle(
                       fontSize: 16,
                       //decoration: TextDecoration.underline,

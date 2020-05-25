@@ -137,6 +137,7 @@ class _InputFormWidgetState extends State<InputFormWidget> {
                 keyboardType: TextInputType.multiline,
                 maxLines: null,
                 maxLength: 100,
+                autofocus: true,
                 initialValue:
                     (widget.record != null) ? widget.record["title"] : '',
                 decoration: const InputDecoration(
