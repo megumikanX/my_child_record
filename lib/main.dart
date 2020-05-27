@@ -73,7 +73,13 @@ class _MainPageState extends State<MainPageWidget> {
     return Scaffold(
       backgroundColor: Colors.deepPurple[50],
       appBar: AppBar(
-        leading: Icon(Icons.child_care),
+        //leading: Icon(Icons.child_care),
+        leading: Padding(
+          padding: const EdgeInsets.fromLTRB(12.0, 0.0, 0.0, 0.0),
+          child: Image(
+            image: AssetImage('images/face1.png'),
+          ),
+        ),
         title: const Text('うちのこ語録'),
         backgroundColor: Colors.pinkAccent,
       ),

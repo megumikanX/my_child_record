@@ -133,7 +133,11 @@ class PageWidget extends StatelessWidget {
             padding: EdgeInsets.only(top: 20.0),
             child: FlatButton(
               onPressed: () {
-                launchURL('https://flutter.dev');
+                String email = 'megumikan.works@gmail.com';
+                String subject = Uri.encodeComponent('aaa');
+                String body = Uri.encodeComponent('bbb.');
+                String url = 'mailto:$email?subject=$subject&body=$body';
+                launchURL(url);
               },
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -209,6 +213,16 @@ class PageWidget extends StatelessWidget {
                     ),
                   ),
                 ],
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 20.0),
+            child: SizedBox(
+              width: 200.0,
+              height: 100.0,
+              child: Image(
+                image: AssetImage('images/back.png'),
               ),
             ),
           ),

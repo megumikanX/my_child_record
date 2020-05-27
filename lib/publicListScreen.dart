@@ -80,6 +80,7 @@ class PublicListPageWidgetState extends State<PublicListPageWidget> {
     }
 
     try {
+      print('getAllWords');
       final words = await query.limit(100).getDocuments();
       for (var word in words.documents) {
         Map record = word.data;

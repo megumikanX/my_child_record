@@ -25,6 +25,7 @@ dependencies:
   flutter_native_splash: ^0.1.9
   flutter_sliding_tutorial: ^0.1.0
   flutter_share: ^1.0.2+1
+  flutter_launcher_icons: ^0.7.4
 
   flutter_localizations:
     sdk: flutter
@@ -38,7 +39,8 @@ flutter:
 
   uses-material-design: true
   assets:
-    - images/photo.png
+    - images/face1.png
+    - images/back.png
   fonts:
     - family: TypeGothic
       fonts:
@@ -46,5 +48,10 @@ flutter:
           weight: 400
 
 flutter_native_splash:
-#  image: "assets/icon/small-logo.png"
-  color: "#d13382"
+  image: images/loading.png
+  color: "#FF4081"
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: 'images/icon.png'
