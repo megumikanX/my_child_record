@@ -209,7 +209,7 @@ class ListPageWidgetState extends State<ListPageWidget> {
           ),
         ),
         isThreeLine: true,
-        trailing: Icon(Icons.create, color: Colors.pink),
+        trailing: Icon(Icons.arrow_forward_ios, color: Colors.pink),
         onTap: () {
           print(word["documentID"]);
           String documentID = word["documentID"];

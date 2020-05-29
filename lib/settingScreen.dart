@@ -79,7 +79,7 @@ class PageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SingleChildScrollView(
       padding: EdgeInsets.only(top: 50.0),
       child: Column(
         children: <Widget>[
@@ -219,8 +219,8 @@ class PageWidget extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(top: 20.0),
             child: SizedBox(
-              width: 200.0,
-              height: 100.0,
+              width: 300.0,
+              height: 200.0,
               child: Image(
                 image: AssetImage('images/back.png'),
               ),
