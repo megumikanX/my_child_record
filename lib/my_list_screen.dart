@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'inputScreen.dart';
+import 'input_screen.dart';
 
 // うちの子語録リストのページ
 class ListPageWidget extends StatefulWidget {

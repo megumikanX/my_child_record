@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'myListScreen.dart';
-import 'publicListScreen.dart';
-import 'settingScreen.dart';
-import 'registrationScreen.dart';
-import 'loginScreen.dart';
+import 'my_list_screen.dart';
+import 'public_list_screen.dart';
+import 'setting_screen.dart';
+import 'registration_screen.dart';
+import 'login_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 //import 'package:flutter_icons/flutter_icons.dart';
 
