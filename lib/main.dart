@@ -9,7 +9,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 void main() => runApp(MyApp());
 
-// アプリ
 class MyApp extends StatelessWidget {
   static const String _title = 'うちのこ語録';
 
