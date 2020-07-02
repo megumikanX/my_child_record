@@ -83,6 +83,10 @@ class PageWidget extends StatelessWidget {
       padding: EdgeInsets.only(top: 50.0),
       child: Column(
         children: <Widget>[
+          Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Text('ログアウト'),
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[

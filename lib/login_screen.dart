@@ -91,7 +91,6 @@ class _LoginFormState extends State<LoginForm> {
         requestedOperation: OpenIdOperation.operationLogin,
       )
     ]);
-    // TODO: result.status を見てエラーハンドリング
 
     const oAuthProvider = OAuthProvider(providerId: 'apple.com');
     final credential = oAuthProvider.getCredential(

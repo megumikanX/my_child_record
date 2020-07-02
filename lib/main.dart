@@ -96,11 +96,6 @@ class _MainPageState extends State<MainPageWidget> {
             title: Text('うちのこ語録'),
             backgroundColor: Colors.deepPurple,
           ),
-//          BottomNavigationBarItem(
-//            icon: Icon(Icons.favorite),
-//            title: Text('お気に入り'),
-//            backgroundColor: Colors.deepPurple,
-//          ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
             title: Text('設定'),

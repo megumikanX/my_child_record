@@ -7,11 +7,6 @@ import 'input_screen.dart';
 
 // うちの子語録リストのページ
 class ListPageWidget extends StatefulWidget {
-  //final List<Map> myWords;
-  //final String uid;
-  //final FirebaseUser loginUser;
-
-  //ListPageWidget({Key key, this.myWords, this.uid}) : super(key: key);
   ListPageWidget({Key key}) : super(key: key);
 
   @override
@@ -131,13 +126,6 @@ class ListPageWidgetState extends State<ListPageWidget> {
           label: Text('書く'),
           icon: Icon(Icons.create),
           backgroundColor: Colors.pinkAccent,
-//        onPressed: () async {
-//          final result = await Navigator.of(context).pushNamed('/input');
-//          if (result != null) {
-//            final contentText = 'I received ' + result + ' !';
-//            print(contentText);
-//            //_myWords.add(result);
-//          }
           onPressed: () {
             Map record;
             Navigator.push(
