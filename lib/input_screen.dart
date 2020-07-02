@@ -56,6 +56,9 @@ class _InputFormWidgetState extends State<InputFormWidget> {
     } else {
       wordText = widget.record["title"];
       detailText = widget.record["detail"];
+      age = widget.record["ageOption"];
+      type = widget.record["typeOption"];
+      public = widget.record["isPublic"];
     }
   }
 
